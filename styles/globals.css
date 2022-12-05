@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Eczar:wght@400;500;600;700;800&display=swap");
+
+*,
+*:before,
+*:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+html,
+body,
+input,
+textarea,
+button {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: "Eczar", "Georgia", serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #83744e;
+}
+body {
+  background: #111822;
+}
+img {
+  width: 100%;
+}
+svg {
+  max-height: 100%;
+}

@@ -1,0 +1,48 @@
+.button {
+  background-color: transparent;
+  border: 3px solid #83744e;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-weight: 700;
+  margin: 18px;
+  padding: 21px 36px;
+  outline: transparent solid 1px;
+  transition: all 0.1s linear;
+  &:hover {
+    background-color: #83744e;
+    color: #111822;
+  }
+  &.primary {
+    outline: none;
+    background-color: #fff;
+    border-color: #fff;
+    color: #000;
+    &:hover {
+      opacity: 0.75;
+    }
+    &.disabled {
+      opacity: 0.25;
+    }
+  }
+  &.disabled {
+    opacity: 0.25;
+    outline: none;
+    cursor: not-allowed;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .button {
+    border-color: #000;
+    &.primary {
+      background-color: #000;
+      border-color: #000;
+      color: #fff;
+      &:hover {
+        opacity: 0.75;
+      }
+    }
+  }
+}

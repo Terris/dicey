@@ -1,0 +1,23 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 3px solid #83744e;
+  .logo {
+    text-align: center;
+    font-size: 2rem;
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+  .user-menu {
+    width: 25%;
+    text-align: right;
+  }
+}
+.main {
+  padding: 1rem;
+  min-height: 100vh;
+}

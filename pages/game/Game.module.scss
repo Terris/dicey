@@ -1,0 +1,10 @@
+.game {
+  display: flex;
+  .board {
+    width: 50%;
+  }
+  .sidebar-left,
+  .sidebar-right {
+    width: 25%;
+  }
+}
