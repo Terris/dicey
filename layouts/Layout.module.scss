@@ -1,23 +1,26 @@
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border-bottom: 3px solid #83744e;
+  position: relative;
+  padding: 1rem 0 2rem 0;
   .logo {
+    font-family: "Shrikhand", cursive;
+    font-weight: 400;
     text-align: center;
-    font-size: 2rem;
+    font-size: 4rem;
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
     a {
       color: inherit;
       text-decoration: none;
     }
   }
   .user-menu {
-    width: 25%;
+    position: absolute;
+    top: 2.25rem;
+    right: 2.25rem;
+    width: 32px;
     text-align: right;
+    color: var(--primary-color);
   }
 }
 .main {
-  padding: 1rem;
-  min-height: 100vh;
+  flex: 1;
 }

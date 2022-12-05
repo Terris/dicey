@@ -24,6 +24,7 @@ function Button({
       onClick={onClick}
       style={style}
       type={type}
+      disabled={disabled}
     >
       {title}
     </button>

@@ -16,8 +16,9 @@ export default function Home() {
     <Layout>
       <div className={styles.home}>
         {error && <p>{error}</p>}
+        <h2>Roll the dice to get to 10k.</h2>
         <Button
-          title="Start New Game"
+          title="New Game"
           onClick={() => createGame()}
           disabled={loading}
         />

@@ -1,48 +1,27 @@
 .button {
   background-color: transparent;
-  border: 3px solid #83744e;
+  border: var(--border-width) solid var(--primary-color);
   border-radius: 12px;
+  color: var(--primary-color);
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.2rem;
-  font-weight: 700;
+  font-weight: 400;
   margin: 18px;
   padding: 21px 36px;
   outline: transparent solid 1px;
   transition: all 0.1s linear;
   &:hover {
-    background-color: #83744e;
-    color: #111822;
-  }
-  &.primary {
-    outline: none;
-    background-color: #fff;
-    border-color: #fff;
-    color: #000;
-    &:hover {
-      opacity: 0.75;
-    }
-    &.disabled {
-      opacity: 0.25;
-    }
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
   }
   &.disabled {
     opacity: 0.25;
     outline: none;
     cursor: not-allowed;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .button {
-    border-color: #000;
-    &.primary {
-      background-color: #000;
-      border-color: #000;
-      color: #fff;
-      &:hover {
-        opacity: 0.75;
-      }
+    &:hover {
+      background-color: transparent;
+      color: var(--primary-color);
     }
   }
 }

@@ -1,14 +1,9 @@
+import { RiSettings5Fill } from "react-icons/ri";
 import { useAuth } from "../../context/AuthContext";
-import styles from "./UserMenu.module.scss";
+
 export default function UserMenu() {
-  const { user, signOut } = useAuth();
-  return (
-    <>
-      {user ? (
-        <button className={styles.button} onClick={signOut}>
-          Logout
-        </button>
-      ) : null}
-    </>
-  );
+  const { user } = useAuth();
+
+  if (!user) return null;
+  return <RiSettings5Fill size={30} />;
 }

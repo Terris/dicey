@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useAuth } from "../context/AuthContext";
 import styles from "./Layout.module.scss";
 import Link from "next/link";
+import UserMenu from "../components/UserMenu/UserMenu";
 
 interface LayoutProps {
   children: ReactNode;
@@ -19,10 +20,10 @@ export default function Layout({ children }: LayoutProps) {
       </Head>
       <header className={styles.header}>
         <h1 className={styles.logo}>
-          <Link href="/">DICEY</Link>
+          <Link href="/">Dicey</Link>
         </h1>
         <div className={styles["user-menu"]}>
-          {user ? <button className={styles.button}>Logout</button> : null}
+          <UserMenu />
         </div>
       </header>
       <main className={styles.main}>{children}</main>
