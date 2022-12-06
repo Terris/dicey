@@ -46,21 +46,20 @@ export default function NewPlayerScreen({ game }: NewPlayerScreenProps) {
     await updateGame({ players: newPlayers });
   }
 
-  const mergedErrors = [error, validationError].join(" ");
-
   return (
     <div className={styles["new-player-screen-wrapper"]}>
       <div className={styles["new-player-screen"]}>
-        <h2>Welcome, new player!</h2>
+        <h2 className={styles.title}>Welcome, new player!</h2>
+        {error && <p style={{ color: "red", paddingTop: "1rem" }}>{error}</p>}
         <p>What shall we call you?</p>
-        {mergedErrors && (
-          <p style={{ color: "red", paddingTop: "1rem" }}>{mergedErrors}</p>
-        )}
         <TextInput
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
           disabled={loading}
         />
+        {validationError && (
+          <p style={{ color: "red", paddingTop: "1rem" }}>{validationError}</p>
+        )}
         <Button
           title="Let's Roll!"
           onClick={() => handleAddNickname()}

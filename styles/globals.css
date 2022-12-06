@@ -7,6 +7,8 @@
   --border-width: 1px;
   --border-color: #2d2924;
   --border: var(--border-width) solid var(--border-color);
+  --base-font: "Space Mono", monospace;
+  --heading-font: "Shrikhand", cursive;
 }
 
 *,
@@ -24,7 +26,7 @@ textarea,
 button {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-family: "Space Mono", monospace;
+  font-family: var(--base-font);
   font-size: 16px;
   font-weight: 400;
   color: var(--dark-color);

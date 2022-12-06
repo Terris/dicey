@@ -18,5 +18,10 @@
     input {
       color: #fff;
     }
+    .title {
+      font-family: var(--heading-font);
+      letter-spacing: 0.02rem;
+      padding-bottom: 1rem;
+    }
   }
 }
