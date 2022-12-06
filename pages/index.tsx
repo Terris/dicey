@@ -6,9 +6,9 @@ import styles from "./Home.module.scss";
 
 export default function Home() {
   const router = useRouter();
-  const { loading, error, createGame, game } = useCreateGame({
-    onSuccess: (game) => {
-      router.push(`/games/${game.id}`);
+  const { loading, error, createGame } = useCreateGame({
+    onSuccess: (newGameId) => {
+      router.push(`/games/${newGameId}`);
     },
   });
 

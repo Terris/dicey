@@ -5,6 +5,7 @@ import { useGame } from "../../context/GameContext";
 import NewPlayerScreen from "../../components/NewPlayerScreen/NewPlayerScreen";
 import type { Player } from "../../types/types";
 import styles from "./Game.module.scss";
+import Board from "../Board/Board";
 
 export default function Game() {
   const { user } = useAuth();
@@ -37,6 +38,7 @@ export default function Game() {
           </div>
           <div className={styles.board}>
             <p style={{ textAlign: "center" }}>Game #{id}</p>
+            <Board />
           </div>
           <div className={styles["sidebar-right"]}>
             <p>Chat</p>

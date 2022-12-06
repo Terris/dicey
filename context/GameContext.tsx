@@ -6,11 +6,11 @@ import {
   useReducer,
   ReactNode,
 } from "react";
-import { doc, onSnapshot, DocumentData } from "firebase/firestore";
+import { ref, onValue, DataSnapshot } from "firebase/database";
 import { db } from "../lib/firebase";
 
 interface GameContextProps {
-  game?: DocumentData | null;
+  game?: DataSnapshot | null;
   loading: boolean;
   error: string | null;
   roll: () => void;
@@ -48,15 +48,16 @@ export function GameProvider({ children, id }: GameProviderProps) {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [game, setGame] = useState<DocumentData>();
+  const [game, setGame] = useState<DataSnapshot | null>(null);
 
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    const unsubscribe = onSnapshot(
-      doc(db, "games", id),
-      (doc) => {
-        setGame(doc.data());
+    const unsubscribe = onValue(
+      ref(db, "games/" + id),
+      (snapshot: DataSnapshot) => {
+        const data = snapshot.val();
+        setGame(data);
         setLoading(false);
       },
       (error) => {

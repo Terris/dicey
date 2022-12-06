@@ -1,18 +1,17 @@
 import { useState } from "react";
-import { collection, addDoc, DocumentData } from "firebase/firestore";
+import { ref, push, set } from "firebase/database";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../lib/firebase";
 import { uniqueId } from "../utils";
 
 interface UseCreateGameProps {
-  onSuccess: (game: DocumentData) => void;
+  onSuccess: (newGameId: string) => void;
 }
 
 export default function useCreateGame({ onSuccess }: UseCreateGameProps) {
   const { user, signIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [game, setGame] = useState<DocumentData | null>(null);
 
   async function createGame() {
     setError(null);
@@ -20,7 +19,9 @@ export default function useCreateGame({ onSuccess }: UseCreateGameProps) {
     try {
       await signIn();
       if (!user) throw new Error("No user defined.");
-      const gameDocRef = await addDoc(collection(db, "games"), {
+      const newGameRef = await push(ref(db, "games"));
+      await set(newGameRef, {
+        id: newGameRef.key,
         owner: user.uid,
         slug: uniqueId(6),
         players: [
@@ -31,8 +32,7 @@ export default function useCreateGame({ onSuccess }: UseCreateGameProps) {
           },
         ],
       });
-      setGame(gameDocRef);
-      if (onSuccess) onSuccess(gameDocRef);
+      if (onSuccess && newGameRef.key) onSuccess(newGameRef.key);
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -44,6 +44,5 @@ export default function useCreateGame({ onSuccess }: UseCreateGameProps) {
     error,
     loading,
     createGame,
-    game,
   };
 }

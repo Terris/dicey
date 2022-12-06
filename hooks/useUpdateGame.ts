@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { doc, updateDoc, DocumentData } from "firebase/firestore";
+import { ref, update, DatabaseReference } from "firebase/database";
 import { db } from "../lib/firebase";
 import { Player } from "../types/types";
 
@@ -18,7 +18,7 @@ export default function useUpdateGame({ id, onSuccess }: UseUpdateGameProps) {
     setLoading(true);
 
     try {
-      await updateDoc(doc(db, "games", id), {
+      await update(ref(db, `games/${id}`), {
         players,
       });
       if (onSuccess) onSuccess();
