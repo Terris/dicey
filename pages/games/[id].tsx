@@ -1,5 +1,6 @@
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/router";
+import { DocumentData } from "firebase/firestore";
 import Layout from "../../layouts/Layout";
 import { useAuth } from "../../context/AuthContext";
 import useGame from "../../hooks/useGame";
@@ -7,19 +8,14 @@ import useUpdateGame from "../../hooks/useUpdateGame";
 import TextInput from "../../components/TextInput/TextInput";
 import Board from "../../components/Board/Board";
 import Button from "../../components/Button/Button";
-import styles from "./Game.module.scss";
-import { DocumentData } from "firebase/firestore";
 import type { Player } from "../../types/types";
+import styles from "./Game.module.scss";
 
 export default function Game() {
   const { user } = useAuth();
   const router = useRouter();
   const { id } = router.query;
   const { error, game } = useGame({ id: id as string, pause: !user });
-
-  const isGameOwner = useMemo(() => {
-    return game?.owner === user?.uid;
-  }, [game?.owner, user?.uid]);
 
   const userPlayer = useMemo(() => {
     return game?.players.find((player: Player) => player.uid === user?.uid);
@@ -39,7 +35,7 @@ export default function Game() {
             {game?.players.map((player: Player) => (
               <div key={player.uid}>
                 <p>
-                  {player.name} {isGameOwner && "*"}
+                  {player.name} {game?.owner === player?.uid && "*"}
                 </p>
               </div>
             ))}
