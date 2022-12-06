@@ -7,7 +7,7 @@ interface UseGameProps {
   pause?: boolean;
 }
 
-export default function useGame({ id, pause }: UseGameProps) {
+export default function useRealtimeGame({ id, pause }: UseGameProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [game, setGame] = useState<DocumentData>();

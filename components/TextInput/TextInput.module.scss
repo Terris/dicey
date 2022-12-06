@@ -31,12 +31,3 @@
   letter-spacing: 0.15rem;
   padding: 0 0 0 4px;
 }
-
-@media (prefers-color-scheme: light) {
-  .text-input {
-    border-color: #000;
-    &:focus {
-      outline: #000 solid 1px;
-    }
-  }
-}

@@ -16,8 +16,7 @@ export default function Home() {
     <Layout>
       <div className={styles.home}>
         {error && <p>{error}</p>}
-        <h2 style={{ paddingBottom: "2rem" }}>Roll the dice to get to 10k.</h2>
-
+        <h2 style={{ paddingBottom: "2rem" }}>Play Dice 10K with friends.</h2>
         <Button
           title="Start New Game"
           onClick={() => createGame()}
