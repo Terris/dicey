@@ -41,6 +41,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     });
   }, []);
 
+  useEffect(() => {
+    if (!user) {
+      signIn();
+    }
+  }, [user]);
+
   function signIn() {
     setLoading(true);
     setError(null);

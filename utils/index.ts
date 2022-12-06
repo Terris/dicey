@@ -14,5 +14,5 @@ export function getRandomInt(min: number, max: number) {
 }
 
 export function getRandomDieValue() {
-  return getRandomInt(1, 6);
+  return getRandomInt(1, 7);
 }

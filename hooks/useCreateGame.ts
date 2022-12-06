@@ -21,8 +21,15 @@ export default function useCreateGame({ onSuccess }: UseCreateGameProps) {
       await signIn();
       if (!user) throw new Error("No user defined.");
       const gameDocRef = await addDoc(collection(db, "games"), {
-        owner: user?.uid,
+        owner: user.uid,
         slug: uniqueId(6),
+        players: [
+          {
+            uid: user.uid,
+            name: "",
+            score: 0,
+          },
+        ],
       });
       setGame(gameDocRef);
       if (onSuccess) onSuccess(gameDocRef);

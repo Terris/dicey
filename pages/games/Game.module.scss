@@ -1,0 +1,44 @@
+.game {
+  display: flex;
+  height: 100%;
+  .board {
+    padding: 1rem;
+    width: 70%;
+    height: 100%;
+  }
+  .sidebar-left,
+  .sidebar-right {
+    padding: 1rem;
+    width: 15%;
+    height: 100%;
+  }
+  .sidebar-left {
+    border-right: 1px solid #bebdbc;
+  }
+  .sidebar-right {
+    border-left: 1px solid #bebdbc;
+  }
+}
+
+.new-player-screen-wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .new-player-screen {
+    width: 50%;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--dark-color);
+    border-radius: 6px;
+    color: white;
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.15);
+    input {
+      color: #fff;
+    }
+  }
+}

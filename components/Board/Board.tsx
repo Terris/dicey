@@ -5,16 +5,14 @@ import { getRandomDieValue } from "../../utils";
 
 export default function Board() {
   const [turn, setTurn] = useState<number[][][]>([]);
-  console.log("turn: ", turn);
+
   const [round, setRound] = useState<number>(0);
   const [roundKeeps, setRoundKeeps] = useState<number[][]>([]);
-  console.log("round keeps: ", roundKeeps);
 
   const [rollComplete, setRollComplete] = useState<boolean>(true);
   const [rollCount, setRollCount] = useState<number>(0);
   const [roll, setRoll] = useState<number[]>([]);
   const [rollKeeps, setRollKeeps] = useState<number[]>([]);
-  console.log("roll keeps: ", rollKeeps);
 
   useEffect(() => {
     if (rollCount === 0) return;

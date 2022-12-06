@@ -8,7 +8,7 @@ export default function Home() {
   const router = useRouter();
   const { loading, error, createGame, game } = useCreateGame({
     onSuccess: (game) => {
-      router.push(`/game/${game.id}`);
+      router.push(`/games/${game.id}`);
     },
   });
 

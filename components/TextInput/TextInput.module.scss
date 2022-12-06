@@ -1,0 +1,42 @@
+.text-input-wrapper {
+  padding: 18px 0;
+}
+.text-input {
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  display: flex;
+  width: 100%;
+  outline: transparent solid 1px;
+  padding: 21px;
+  transition: border-color 0.1s ease-in, background-color 0.1s ease-in,
+    outline 0.1s ease-in;
+  &:focus {
+    outline: var(--primary-color) solid 1px;
+  }
+  &.disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+  }
+  &.hasLabel {
+    margin-top: 6px;
+  }
+}
+
+.label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.15rem;
+  padding: 0 0 0 4px;
+}
+
+@media (prefers-color-scheme: light) {
+  .text-input {
+    border-color: #000;
+    &:focus {
+      outline: #000 solid 1px;
+    }
+  }
+}
