@@ -8,9 +8,11 @@ import {
 } from "react";
 import { ref, onValue, DataSnapshot } from "firebase/database";
 import { db } from "../lib/firebase";
+import { Game } from "../types/types";
+import { useAuth } from "./AuthContext";
 
 interface GameContextProps {
-  game?: DataSnapshot | null;
+  game?: Game | null;
   loading: boolean;
   error: string | null;
   roll: () => void;
@@ -44,14 +46,15 @@ interface GameProviderProps {
 }
 
 export function GameProvider({ children, id }: GameProviderProps) {
+  const { user } = useAuth();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [game, setGame] = useState<DataSnapshot | null>(null);
+  const [game, setGame] = useState<Game | null>(null);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !user) return;
     setLoading(true);
     const unsubscribe = onValue(
       ref(db, "games/" + id),
@@ -66,7 +69,9 @@ export function GameProvider({ children, id }: GameProviderProps) {
       }
     );
     return () => unsubscribe();
-  }, [id]);
+  }, [id, user]);
+
+  if (loading) return <p>Loading ...</p>;
 
   return (
     <GameContext.Provider value={{ ...state, game, loading, error }}>

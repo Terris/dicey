@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ref, update, DatabaseReference } from "firebase/database";
 import { db } from "../lib/firebase";
-import { Player } from "../types/types";
+import { Game, Player } from "../types/types";
 
 interface UseUpdateGameProps {
   id?: string;
@@ -12,14 +12,14 @@ export default function useUpdateGame({ id, onSuccess }: UseUpdateGameProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function updateGame({ players }: { players: Player[] }) {
+  async function updateGame(options: Partial<Game>) {
     if (!id) return;
     setError(null);
     setLoading(true);
 
     try {
       await update(ref(db, `games/${id}`), {
-        players,
+        ...options,
       });
       if (onSuccess) onSuccess();
     } catch (e: any) {

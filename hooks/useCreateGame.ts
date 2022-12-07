@@ -24,11 +24,14 @@ export default function useCreateGame({ onSuccess }: UseCreateGameProps) {
         id: newGameRef.key,
         owner: user.uid,
         slug: uniqueId(6),
+        status: "LOBBY",
         players: [
           {
             uid: user.uid,
             name: "",
             score: 0,
+            ready: false,
+            connected: true,
           },
         ],
       });

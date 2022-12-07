@@ -36,16 +36,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setUser(user || null);
-    });
-  }, []);
-
-  useEffect(() => {
     if (!user) {
       signIn();
     }
   }, [user]);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      setUser(user || null);
+    });
+  }, []);
 
   function signIn() {
     setLoading(true);

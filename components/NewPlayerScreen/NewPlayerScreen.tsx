@@ -27,7 +27,7 @@ export default function NewPlayerScreen({ game }: NewPlayerScreenProps) {
       return;
     }
 
-    // update a current player or add a new one
+    // update the existing player or add a new one
     const isCurrentPlayer = game?.players.find(
       (player: Player) => player.uid === user?.uid
     );
@@ -41,7 +41,16 @@ export default function NewPlayerScreen({ game }: NewPlayerScreenProps) {
           }
           return player;
         })
-      : [...game?.players, { uid: user?.uid, name: nickname, score: 0 }];
+      : [
+          ...game?.players,
+          {
+            uid: user?.uid,
+            name: nickname,
+            score: 0,
+            ready: false,
+            connected: true,
+          },
+        ];
 
     await updateGame({ players: newPlayers });
   }

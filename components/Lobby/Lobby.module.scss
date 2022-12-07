@@ -1,0 +1,18 @@
+.lobby {
+  max-width: 900px;
+  margin: 0 auto;
+  .players {
+    border: 1px solid #bebdbc;
+    border-radius: 6px;
+    .player {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      border-bottom: 1px solid #bebdbc;
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
