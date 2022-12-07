@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useAuth } from "../../context/AuthContext";
 import { useGame } from "../../context/GameContext";
 import NewPlayerScreen from "../../components/NewPlayerScreen/NewPlayerScreen";
+import PlayerScores from "../../components/PlayerScores/PlayerScores";
 import Lobby from "../../components/Lobby/Lobby";
 import type { Player } from "../../types/types";
 import styles from "./Game.module.scss";
@@ -28,15 +29,7 @@ export default function Game() {
       {game ? (
         <div className={styles.game}>
           <div className={styles["sidebar-left"]}>
-            <p style={{ fontWeight: 700 }}>Player Scores</p>
-            {game?.players.map((player: Player) => (
-              <div key={player.uid}>
-                <p>
-                  {player.name}
-                  {game?.owner === player?.uid && "*"}
-                </p>
-              </div>
-            ))}
+            <PlayerScores />
           </div>
           <div className={styles.board}>
             <p style={{ textAlign: "center" }}>Game #{id}</p>

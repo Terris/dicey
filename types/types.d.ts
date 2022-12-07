@@ -12,4 +12,12 @@ export type Game = {
   status: "LOBBY" | "IN_PROGRESS" | "COMPLETE";
   slug: string;
   players: Player[];
+  currentTurn: CurrentTurn;
+};
+
+export type CurrentTurn = {
+  player: string;
+  roll: number[];
+  keeps: number[];
+  score: number;
 };

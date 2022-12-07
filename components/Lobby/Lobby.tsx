@@ -7,8 +7,9 @@ import { useGame } from "../../context/GameContext";
 import useUpdateGame from "../../hooks/useUpdateGame";
 import Button from "../Button/Button";
 import TextButton from "../TextButton/TextButton";
-import styles from "./Lobby.module.scss";
+import { getRandomInt } from "../../utils";
 import { Player } from "../../types/types";
+import styles from "./Lobby.module.scss";
 
 export default function Lobby() {
   const { user } = useAuth();
@@ -17,6 +18,19 @@ export default function Lobby() {
 
   const userIsOwner = game?.owner === user?.uid;
   const allPlayersReady = game?.players.every((player) => player.ready);
+
+  function setUpGame() {
+    if (!game) return;
+    const randomPlayer = game.players[getRandomInt(0, game.players.length - 1)];
+    const currentTurn = {
+      player: randomPlayer.uid,
+      roll: [],
+      keeps: [],
+      score: 0,
+    };
+    // update the game
+    updateGame({ currentTurn, status: "IN_PROGRESS" });
+  }
 
   return (
     <div className={styles.lobby}>
@@ -32,7 +46,7 @@ export default function Lobby() {
           <Button
             title="Start the Game!"
             disabled={!allPlayersReady}
-            onClick={() => updateGame({ status: "IN_PROGRESS" })}
+            onClick={() => setUpGame()}
           />
         </div>
       )}
