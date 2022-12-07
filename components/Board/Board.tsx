@@ -1,67 +1,21 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useGame } from "../../context/GameContext";
+import { useAuth } from "../../context/AuthContext";
 import Die from "../../components/Die/Die";
 import Button from "../../components/Button/Button";
-import { getRandomDieValue } from "../../utils";
 
 export default function Board() {
-  const [turn, setTurn] = useState<number[][][]>([]);
+  const { user } = useAuth();
+  const { game, turn, rollDice, addRollKeep, removeRollKeep } = useGame();
 
-  const [round, setRound] = useState<number>(0);
-  const [roundKeeps, setRoundKeeps] = useState<number[][]>([]);
-
-  const [rollComplete, setRollComplete] = useState<boolean>(true);
-  const [rollCount, setRollCount] = useState<number>(0);
-  const [roll, setRoll] = useState<number[]>([]);
-  const [rollKeeps, setRollKeeps] = useState<number[]>([]);
-
+  // Show toast on current users turn
   useEffect(() => {
-    if (rollCount === 0) return;
-    setRollComplete(rollKeeps.length > 0);
-  }, [rollCount, roll, rollKeeps]);
-
-  function rollDice() {
-    setRollCount((c) => c + 1);
-    setRollComplete(false);
-
-    // push rollKeeps to roundKeeps
-    const newRoundKeeps = [...roundKeeps, rollKeeps];
-    setRoundKeeps(newRoundKeeps);
-    setRollKeeps([]);
-
-    // push roundKeeps to turn
-    if (rollCount > 0 && roll.length === 0) {
-      setTurn((t) => [...t, newRoundKeeps]);
-      setRoundKeeps([]);
-      setRound((r) => r + 1);
+    if (!game) return;
+    if (game.currentTurn.player === user?.uid && !turn.roll.length) {
+      toast.success("Your turn!", { duration: 4000 });
     }
-
-    const newDiceCount = roll.length > 0 ? roll.length : 6;
-    const newRoll = [];
-    for (let i = 0; i < newDiceCount; i++) {
-      newRoll.push(getRandomDieValue());
-    }
-    setRoll(newRoll);
-  }
-
-  function handleAddKeep(value: number, currentRollIndex: number) {
-    const newRoll = roll.filter((val, idx) => {
-      if (idx !== currentRollIndex) {
-        return val;
-      }
-    });
-    setRoll(newRoll);
-    setRollKeeps((keeps) => [...keeps, value]);
-  }
-
-  function handleRemoveKeep(value: number, rollIndex: number) {
-    const newKeeps = rollKeeps.filter((val, idx) => {
-      if (idx !== rollIndex) {
-        return val;
-      }
-    });
-    setRollKeeps(newKeeps);
-    setRoll((roll) => [...roll, value]);
-  }
+  }, [game, user?.uid, turn.roll.length]);
 
   return (
     <>
@@ -73,11 +27,11 @@ export default function Board() {
         }}
       >
         Roll:
-        {roll.map((val, idx) => (
+        {turn.roll.map((value, rollIndex) => (
           <Die
-            key={`roll-die-${idx}-${val}`}
-            value={val}
-            onClick={() => handleAddKeep(val, idx)}
+            key={`roll-die-${rollIndex}-${value}`}
+            value={value}
+            onClick={() => addRollKeep({ value, rollIndex })}
           />
         ))}
       </div>
@@ -89,11 +43,11 @@ export default function Board() {
         }}
       >
         Roll keeps:
-        {rollKeeps.map((val, idx) => (
+        {turn.rollKeeps.map((value, rollKeepsIndex) => (
           <Die
-            key={`keep-die-${idx}-${val}`}
-            value={val}
-            onClick={() => handleRemoveKeep(val, idx)}
+            key={`keep-die-${rollKeepsIndex}-${value}`}
+            value={value}
+            onClick={() => removeRollKeep({ value, rollKeepsIndex })}
           />
         ))}
       </div>
@@ -105,18 +59,18 @@ export default function Board() {
         }}
       >
         Round Keeps:
-        {roundKeeps.map((keepGroup) =>
+        {turn.roundKeeps.map((keepGroup) =>
           keepGroup.map((val, idx) => (
             <Die key={`keep-die-${idx}-${val}`} value={val} />
           ))
         )}
       </div>
-      <p>{turn}</p>
+      <p>{turn.turnKeeps}</p>
       <div style={{ textAlign: "center" }}>
         <Button
           title="Roll"
           onClick={() => rollDice()}
-          disabled={!rollComplete}
+          disabled={!turn.rollComplete}
         />
       </div>
     </>

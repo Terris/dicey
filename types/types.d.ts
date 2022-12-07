@@ -18,6 +18,6 @@ export type Game = {
 export type CurrentTurn = {
   player: string;
   roll: number[];
-  keeps: number[];
+  keeps: number[][];
   score: number;
 };
