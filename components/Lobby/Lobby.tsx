@@ -8,7 +8,7 @@ import useUpdateGame from "../../hooks/useUpdateGame";
 import Button from "../Button/Button";
 import TextButton from "../TextButton/TextButton";
 import { getRandomInt } from "../../utils";
-import { Player } from "../../types/types";
+import { Player, CurrentTurn } from "../../types/types";
 import styles from "./Lobby.module.scss";
 
 export default function Lobby() {
@@ -17,7 +17,8 @@ export default function Lobby() {
   const { updateGame } = useUpdateGame({ id: game?.id });
 
   const userIsOwner = game?.owner === user?.uid;
-  const allPlayersReady = game?.players.every((player) => player.ready);
+  const allPlayersReady =
+    game?.players.every((player) => player.ready) && game.players.length > 1;
 
   function setUpGame() {
     if (!game) return;
@@ -27,6 +28,7 @@ export default function Lobby() {
       roll: [],
       keeps: [],
       score: 0,
+      status: "IN_PROGRESS" as CurrentTurn["status"],
     };
     // update the game
     updateGame({ currentTurn, status: "IN_PROGRESS" });

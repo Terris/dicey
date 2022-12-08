@@ -5,7 +5,7 @@ import { FaDice } from "react-icons/fa";
 export default function PlayerScores() {
   const { game } = useGame();
 
-  if (!game) return null;
+  if (!game || game.status !== "IN_PROGRESS") return null;
   return (
     <>
       <p style={{ fontWeight: 700, paddingBottom: "6px" }}>Score Board</p>

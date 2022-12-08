@@ -1,7 +1,10 @@
 import { GameContextProps } from "./GameContext";
 
 type ACTION_TYPE =
-  | { type: "ROLL_DICE"; payload: number[] }
+  | {
+      type: "ROLL_DICE";
+      payload: { roll: number[]; status: "BUSTED" | "IN_PROGRESS" };
+    }
   | { type: "SET_ROLL_COMPLETE"; payload: boolean }
   | {
       type: "ADD_ROLL_KEEP";
@@ -20,6 +23,7 @@ export interface TurnStateProps {
   roundCount: number;
   roundKeeps: number[][];
   turnKeeps: number[][][];
+  status: "BUSTED" | "IN_PROGRESS";
 }
 
 export const initialState = {
@@ -30,6 +34,7 @@ export const initialState = {
   roundKeeps: [],
   rollKeeps: [],
   turnKeeps: [],
+  status: "IN_PROGRESS" as TurnStateProps["status"],
 };
 
 export default function reducer(state: TurnStateProps, action: ACTION_TYPE) {
@@ -48,7 +53,8 @@ export default function reducer(state: TurnStateProps, action: ACTION_TYPE) {
           : state.turnKeeps,
         roundKeeps: roundComplete ? [] : newRoundKeeps,
         roundCount: state.roundCount + 1,
-        roll: action.payload,
+        roll: action.payload.roll,
+        status: action.payload.status,
       };
       return { ...state, ...newState };
     case "SET_ROLL_COMPLETE":

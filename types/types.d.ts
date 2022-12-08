@@ -20,4 +20,5 @@ export type CurrentTurn = {
   roll: number[];
   keeps: number[][];
   score: number;
+  status: "BUSTED" | "IN_PROGRESS";
 };

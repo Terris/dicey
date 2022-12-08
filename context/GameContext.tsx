@@ -105,6 +105,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
         roll: turn.roll,
         keeps: turn.roundKeeps,
         score: 0,
+        status: turn.status,
       },
     });
   }, [turn, game, updateGame]);
@@ -123,10 +124,13 @@ export function GameProvider({ children, id }: GameProviderProps) {
     for (let i = 0; i < newDiceCount; i++) {
       newRoll.push(getRandomDieValue());
     }
-    if (!rollHasPoints(newRoll)) {
-      console.log("BUST!!!");
-    }
-    dispatch({ type: "ROLL_DICE", payload: newRoll });
+    dispatch({
+      type: "ROLL_DICE",
+      payload: {
+        roll: newRoll,
+        status: !rollHasPoints(newRoll) ? "BUSTED" : "IN_PROGRESS",
+      },
+    });
   }
 
   function addRollKeep({

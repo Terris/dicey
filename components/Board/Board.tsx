@@ -4,6 +4,8 @@ import { useGame } from "../../context/GameContext";
 import { useAuth } from "../../context/AuthContext";
 import Die from "../../components/Die/Die";
 import Button from "../../components/Button/Button";
+import { rollHasPoints } from "../../utils";
+import styles from "./Board.module.scss";
 
 export default function Board() {
   const { user } = useAuth();
@@ -17,16 +19,16 @@ export default function Board() {
     }
   }, [game, user?.uid, turn.roll.length]);
 
+  useEffect(() => {
+    if (!game) return;
+    if (game.currentTurn.status === "BUSTED") {
+      toast.error("You Busted", { duration: 4000 });
+    }
+  }, [game]);
+
   return (
     <>
-      <div
-        style={{
-          padding: "2rem",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        Roll:
+      <div className={styles.board}>
         {turn.roll.map((value, rollIndex) => (
           <Die
             key={`roll-die-${rollIndex}-${value}`}
@@ -35,13 +37,7 @@ export default function Board() {
           />
         ))}
       </div>
-      <div
-        style={{
-          padding: "2rem",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
+      <div>
         Roll keeps:
         {turn.rollKeeps.map((value, rollKeepsIndex) => (
           <Die
@@ -51,13 +47,7 @@ export default function Board() {
           />
         ))}
       </div>
-      <div
-        style={{
-          padding: "2rem",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
+      <div>
         Round Keeps:
         {turn.roundKeeps.map((keepGroup) =>
           keepGroup.map((val, idx) => (
