@@ -59,6 +59,7 @@ export default function Board() {
       </div>
       <p>Turn Keeps: {turn.turnKeeps}</p>
       <p>Turn Score: {turn.turnKeepsScore}</p>
+      <p>Score: {turn.score}</p>
       <div style={{ textAlign: "center" }}>
         <Button
           title="Roll"

@@ -67,7 +67,6 @@ export function GameProvider({ children, id }: GameProviderProps) {
 
   // current user's turn state is managed in client
   const [turn, dispatch] = useReducer(reducer, initialTurnState);
-  console.log("TURNKEEPS", turn.turnKeeps);
 
   // io game state is managed in firebase
   const [loading, setLoading] = useState<boolean>(false);
@@ -105,7 +104,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
         player: game?.currentTurn.player || "",
         roll: turn.roll,
         keeps: turn.roundKeeps,
-        score: 0,
+        score: turn.score,
         status: turn.status,
       },
     });
@@ -127,10 +126,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
     }
     dispatch({
       type: "ROLL_DICE",
-      payload: {
-        roll: newRoll,
-        status: !rollHasPoints(newRoll) ? "BUSTED" : "IN_PROGRESS",
-      },
+      payload: newRoll,
     });
   }
 

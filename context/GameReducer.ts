@@ -1,9 +1,10 @@
-import { scoreForKeeps } from "../utils";
+import { scoreForKeeps, scoreForTurn, rollHasPoints } from "../utils";
+import { TurnStatus } from "../types/types";
 
 type ACTION_TYPE =
   | {
       type: "ROLL_DICE";
-      payload: { roll: number[]; status: "BUSTED" | "IN_PROGRESS" };
+      payload: number[];
     }
   | { type: "SET_ROLL_COMPLETE"; payload: boolean }
   | {
@@ -24,9 +25,10 @@ export interface TurnStateProps {
   roundCount: number;
   roundKeeps: number[][];
   roundKeepsScore: number;
-  turnKeeps: number[][][];
+  turnKeeps: number[][];
   turnKeepsScore: number;
-  status: "BUSTED" | "IN_PROGRESS";
+  status: TurnStatus;
+  score: number;
 }
 
 export const initialState = {
@@ -40,38 +42,39 @@ export const initialState = {
   roundKeepsScore: 0,
   turnKeeps: [],
   turnKeepsScore: 0,
-  status: "IN_PROGRESS" as TurnStateProps["status"],
+  status: TurnStatus.IN_PROGRESS,
+  score: 0,
 };
 
 export default function reducer(state: TurnStateProps, action: ACTION_TYPE) {
   switch (action.type) {
     case "ROLL_DICE": {
+      const newStatus = rollHasPoints(action.payload)
+        ? TurnStatus.IN_PROGRESS
+        : TurnStatus.BUSTED;
+
+      if (newStatus === "BUSTED") {
+        return {
+          ...initialState,
+          status: TurnStatus.BUSTED,
+        };
+      }
+
       const newRoundKeeps = [...state.roundKeeps, state.rollKeeps].filter(
         (n) => n.length
       );
       const roundComplete = Boolean(
         state.rollCount > 0 && state.roll.length === 0
       );
-      const newRoundScore = roundComplete
+      const newRoundKeepsScore = roundComplete
         ? 0
-        : newRoundKeeps
-            .map((keeps) => {
-              return scoreForKeeps(keeps);
-            })
-            .reduce((partialSum, a) => partialSum + a, 0);
-      const newTurnKeeps = roundComplete
-        ? [...state.turnKeeps, newRoundKeeps]
-        : state.turnKeeps;
+        : scoreForTurn(newRoundKeeps);
 
-      const newTurnKeepsScore = newTurnKeeps
-        .map((round) =>
-          round
-            .map((keeps) => {
-              return scoreForKeeps(keeps);
-            })
-            .reduce((partialSum, a) => partialSum + a, 0)
-        )
-        .reduce((partialSum, a) => partialSum + a, 0);
+      const newTurnKeeps = [...state.turnKeeps, state.rollKeeps].filter(
+        (n) => n.length
+      );
+
+      const newTurnKeepsScore = scoreForTurn(newTurnKeeps);
 
       return {
         ...state,
@@ -81,11 +84,12 @@ export default function reducer(state: TurnStateProps, action: ACTION_TYPE) {
         rollKeepsScore: 0,
         roundCount: state.roundCount + 1,
         roundKeeps: roundComplete ? [] : newRoundKeeps,
-        roundKeepsScore: newRoundScore,
+        roundKeepsScore: newRoundKeepsScore,
         turnKeeps: newTurnKeeps,
         turnKeepsScore: newTurnKeepsScore,
-        roll: action.payload.roll,
-        status: action.payload.status,
+        roll: action.payload,
+        status: newStatus,
+        score: newTurnKeepsScore,
       };
     }
     case "SET_ROLL_COMPLETE": {
@@ -99,11 +103,13 @@ export default function reducer(state: TurnStateProps, action: ACTION_TYPE) {
         }
       });
       const newRollKeeps = [...state.rollKeeps, action.payload.value];
+      const newScore = state.turnKeepsScore + scoreForKeeps(newRollKeeps);
       return {
         ...state,
         roll: newRoll,
         rollKeeps: newRollKeeps,
         rollKeepsScore: scoreForKeeps(newRollKeeps),
+        score: newScore,
       };
     }
     case "REMOVE_ROLL_KEEP": {
@@ -112,11 +118,13 @@ export default function reducer(state: TurnStateProps, action: ACTION_TYPE) {
           return value;
         }
       });
+      const newScore = state.turnKeepsScore + scoreForKeeps(newRollKeeps);
       return {
         ...state,
         rollKeeps: newRollKeeps,
         rollKeepsScore: scoreForKeeps(newRollKeeps),
         roll: [...state.roll, action.payload.value],
+        score: newScore,
       };
     }
     default:

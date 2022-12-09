@@ -132,3 +132,15 @@ export function scoreForKeeps(roll: number[]) {
   score += scoreForTriplesOnesAndFives(roll);
   return score;
 }
+
+export function scoreFromArray(arr: number[]) {
+  return arr.reduce((partialSum, a) => partialSum + a, 0);
+}
+
+export function scoreForTurn(turnKeeps: number[][]) {
+  return scoreFromArray(
+    turnKeeps.map((keeps) => {
+      return scoreForKeeps(keeps);
+    })
+  );
+}
