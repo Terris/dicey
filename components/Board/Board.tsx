@@ -19,12 +19,14 @@ export default function Board() {
     }
   }, [game, user?.uid, turn.roll.length]);
 
-  useEffect(() => {
-    if (!game) return;
-    if (game.currentTurn.status === "BUSTED") {
-      toast.error("You Busted", { duration: 4000 });
-    }
-  }, [game]);
+  // useEffect(() => {
+  //   if (!game) return;
+  //   console.log("EFFECT GAME: ", game);
+  //   if (game.currentTurn.status === "BUSTED") {
+  //     console.log("YOU BUSTED!");
+  //     toast.error("You Busted", { duration: 4000 });
+  //   }
+  // }, [game]);
 
   return (
     <>
@@ -67,6 +69,11 @@ export default function Board() {
           disabled={!turn.rollComplete}
         />
       </div>
+      {game?.currentTurn.status === "BUSTED" && (
+        <div>
+          <h1>YOU BUSTED</h1>
+        </div>
+      )}
     </>
   );
 }

@@ -1,5 +1,4 @@
 import { scoreForKeeps, scoreForTurn, rollHasPoints } from "../utils";
-import { TurnStatus } from "../types/types";
 
 type ACTION_TYPE =
   | {
@@ -27,7 +26,7 @@ export interface TurnStateProps {
   roundKeepsScore: number;
   turnKeeps: number[][];
   turnKeepsScore: number;
-  status: TurnStatus;
+  status: string;
   score: number;
 }
 
@@ -42,7 +41,7 @@ export const initialState = {
   roundKeepsScore: 0,
   turnKeeps: [],
   turnKeepsScore: 0,
-  status: TurnStatus.IN_PROGRESS,
+  status: "IN_PROGRESS",
   score: 0,
 };
 
@@ -50,13 +49,13 @@ export default function reducer(state: TurnStateProps, action: ACTION_TYPE) {
   switch (action.type) {
     case "ROLL_DICE": {
       const newStatus = rollHasPoints(action.payload)
-        ? TurnStatus.IN_PROGRESS
-        : TurnStatus.BUSTED;
+        ? "IN_PROGRESS"
+        : "BUSTED";
 
       if (newStatus === "BUSTED") {
         return {
           ...initialState,
-          status: TurnStatus.BUSTED,
+          status: "BUSTED",
         };
       }
 

@@ -5,7 +5,7 @@ import { useGame } from "../../context/GameContext";
 import NewPlayerScreen from "../../components/NewPlayerScreen/NewPlayerScreen";
 import PlayerScores from "../../components/PlayerScores/PlayerScores";
 import Lobby from "../../components/Lobby/Lobby";
-import { GameStatus, Player } from "../../types/types";
+import { Player } from "../../types/types";
 import styles from "./Game.module.scss";
 import Board from "../Board/Board";
 
@@ -33,7 +33,7 @@ export default function Game() {
           </div>
           <div className={styles.board}>
             <p style={{ textAlign: "center" }}>Game #{id}</p>
-            {game.status === GameStatus.LOBBY ? <Lobby /> : <Board />}
+            {game.status === "LOBBY" ? <Lobby /> : <Board />}
           </div>
           <div className={styles["sidebar-right"]}>
             <p>Chat</p>

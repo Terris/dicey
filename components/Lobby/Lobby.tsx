@@ -8,7 +8,7 @@ import useUpdateGame from "../../hooks/useUpdateGame";
 import Button from "../Button/Button";
 import TextButton from "../TextButton/TextButton";
 import { getRandomInt } from "../../utils";
-import { Player, TurnStatus, GameStatus } from "../../types/types";
+import { Player } from "../../types/types";
 import styles from "./Lobby.module.scss";
 
 export default function Lobby() {
@@ -28,10 +28,10 @@ export default function Lobby() {
       roll: [],
       keeps: [],
       score: 0,
-      status: TurnStatus.IN_PROGRESS,
+      status: "IN_PROGRESS",
     };
     // update the game
-    updateGame({ currentTurn, status: GameStatus.IN_PROGRESS });
+    updateGame({ currentTurn, status: "IN_PROGRESS" });
   }
 
   return (
