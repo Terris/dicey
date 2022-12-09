@@ -4,7 +4,7 @@ import { useGame } from "../../context/GameContext";
 import { useAuth } from "../../context/AuthContext";
 import Die from "../../components/Die/Die";
 import Button from "../../components/Button/Button";
-import { rollHasPoints } from "../../utils";
+import { scoreForKeeps } from "../../utils";
 import styles from "./Board.module.scss";
 
 export default function Board() {
@@ -46,6 +46,7 @@ export default function Board() {
             onClick={() => removeRollKeep({ value, rollKeepsIndex })}
           />
         ))}
+        <p>Roll Keeps Score: {turn.rollKeepsScore}</p>
       </div>
       <div>
         Round Keeps:
@@ -54,8 +55,10 @@ export default function Board() {
             <Die key={`keep-die-${idx}-${val}`} value={val} />
           ))
         )}
+        <p>Round Keeps Score: {turn.roundKeepsScore}</p>
       </div>
-      <p>{turn.turnKeeps}</p>
+      <p>Turn Keeps: {turn.turnKeeps}</p>
+      <p>Turn Score: {turn.turnKeepsScore}</p>
       <div style={{ textAlign: "center" }}>
         <Button
           title="Roll"

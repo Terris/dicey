@@ -67,6 +67,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
 
   // current user's turn state is managed in client
   const [turn, dispatch] = useReducer(reducer, initialTurnState);
+  console.log("TURNKEEPS", turn.turnKeeps);
 
   // io game state is managed in firebase
   const [loading, setLoading] = useState<boolean>(false);
