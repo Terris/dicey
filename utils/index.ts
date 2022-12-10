@@ -1,3 +1,5 @@
+import { Player } from "../types/types";
+
 export function uniqueId(length: number = 6) {
   let result = "";
   const characters =
@@ -23,7 +25,7 @@ const SCORE_MAP = {
   STRAIGHT: 1500,
   PAIRS: 1000,
   TRIPLE_ONES: [1, 1, 1], // 1000
-  TRIPLES: [2, 2, 2],
+  TRIPLES: [2, 2, 2, 2], // 400 (200 * 2)
   ONE_HUNDRED: 1, // 100
   FIFTY: 5, // 50
 };
@@ -47,7 +49,7 @@ function createValueMap(roll: number[]) {
 function scoreForStraight(roll: number[]) {
   // [1,2,3,4,5,6]
   if (roll.length < 6) return 0;
-  if (![...roll].sort().every((n, i) => n !== i + 1)) return 0;
+  if (![...roll].sort().every((n, i) => n === i + 1)) return 0;
   return 1500;
 }
 
@@ -143,4 +145,34 @@ export function scoreForTurn(turnKeeps: number[][]) {
       return scoreForKeeps(keeps);
     })
   );
+}
+
+export function canKeepDie({ roll, die }: { roll: number[]; die: number }) {
+  // if the die is part of a scorable combination, return true
+  if (
+    die === 1 ||
+    die === 5 ||
+    scoreForStraight(roll) > 0 ||
+    scoreForPairs(roll) > 0 ||
+    findTriplesMatch({ roll, die })
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function findTriplesMatch({
+  roll,
+  die,
+}: {
+  roll: number[];
+  die: number;
+}) {
+  const triplesMap = createValueMap(roll); // [{ value: 1, count: 3 }, { value: 2, count: 3 }]
+  return triplesMap.find((item) => item.count >= 3 && item.value === die);
+}
+
+export function mergeRollAndKeeps(roll: number[], keeps: number[]) {
+  return [...roll, ...keeps];
 }

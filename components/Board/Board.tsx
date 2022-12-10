@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
 import { useGame } from "../../context/GameContext";
 import { useAuth } from "../../context/AuthContext";
 import Die from "../../components/Die/Die";
 import Button from "../../components/Button/Button";
-import { scoreForKeeps } from "../../utils";
+import { canKeepDie, mergeRollAndKeeps, scoreForKeeps } from "../../utils";
 import styles from "./Board.module.scss";
 
 export default function Board() {
   const { user } = useAuth();
-  const { game, turn, rollDice, addRollKeep, removeRollKeep } = useGame();
+  const { game, turn, rollDice, addRollKeep, removeRollKeep, stay } = useGame();
 
   // Show toast on current users turn
   useEffect(() => {
@@ -19,14 +19,7 @@ export default function Board() {
     }
   }, [game, user?.uid, turn.roll.length]);
 
-  // useEffect(() => {
-  //   if (!game) return;
-  //   console.log("EFFECT GAME: ", game);
-  //   if (game.currentTurn.status === "BUSTED") {
-  //     console.log("YOU BUSTED!");
-  //     toast.error("You Busted", { duration: 4000 });
-  //   }
-  // }, [game]);
+  const playerCanStay = turn.rollKeeps.length > 0;
 
   return (
     <>
@@ -36,6 +29,12 @@ export default function Board() {
             key={`roll-die-${rollIndex}-${value}`}
             value={value}
             onClick={() => addRollKeep({ value, rollIndex })}
+            disabled={
+              !canKeepDie({
+                roll: mergeRollAndKeeps(turn.roll, turn.rollKeeps),
+                die: value,
+              })
+            }
           />
         ))}
       </div>
@@ -62,16 +61,18 @@ export default function Board() {
       <p>Turn Keeps: {turn.turnKeeps}</p>
       <p>Turn Score: {turn.turnKeepsScore}</p>
       <p>Score: {turn.score}</p>
-      <div style={{ textAlign: "center" }}>
-        <Button
-          title="Roll"
-          onClick={() => rollDice()}
-          disabled={!turn.rollComplete}
-        />
-      </div>
-      {game?.currentTurn.status === "BUSTED" && (
+      {game?.currentTurn.status === "BUSTED" ? (
         <div>
-          <h1>YOU BUSTED</h1>
+          <h1>You Busted!</h1>
+        </div>
+      ) : (
+        <div style={{ textAlign: "center" }}>
+          <Button
+            title="Roll"
+            onClick={() => rollDice()}
+            disabled={!turn.rollComplete}
+          />
+          {playerCanStay && <Button title="Stay" onClick={() => stay()} />}
         </div>
       )}
     </>

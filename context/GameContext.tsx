@@ -38,6 +38,7 @@ export interface GameContextProps {
     value: number;
     rollKeepsIndex: number;
   }) => void;
+  stay: () => void;
 }
 
 const initialState = {
@@ -48,6 +49,7 @@ const initialState = {
   rollDice: () => null,
   addRollKeep: () => null,
   removeRollKeep: () => null,
+  stay: () => null,
 };
 
 const GameContext = createContext<GameContextProps>(initialState);
@@ -73,7 +75,37 @@ export function GameProvider({ children, id }: GameProviderProps) {
   const [error, setError] = useState<string | null>(null);
   const [game, setGame] = useState<Game | null>(null);
 
-  // SUBSCRIBE TO DB GAME
+  // PRIVATE FUNCTIONS
+  // ==============================
+  const updateDbTurn = useCallback(async () => {
+    await updateGame({
+      currentTurn: {
+        player: game?.currentTurn.player || "",
+        roll: turn.roll,
+        keeps: [...turn.rollKeeps, ...turn.roundKeeps.flat()],
+        score: turn.score,
+        status: turn.status,
+      },
+    });
+  }, [turn, game, updateGame]);
+
+  const nextPlayer = useCallback(() => {
+    if (!game || !user) return null;
+    const currentPlayerIndex = game.players.findIndex(
+      (player) => player.uid === user.uid
+    );
+    const nextPlayerIndex =
+      currentPlayerIndex + 1 >= game.players.length
+        ? 0
+        : currentPlayerIndex + 1;
+    const nextPlayer = game.players[nextPlayerIndex];
+    return nextPlayer;
+  }, [game, user]);
+
+  // SIDE EFFECTS
+  // ==============================
+
+  // Subscribe to DB Game
   useEffect(() => {
     if (!id || !user) return;
     setLoading(true);
@@ -98,25 +130,33 @@ export function GameProvider({ children, id }: GameProviderProps) {
     dispatch({ type: "SET_ROLL_COMPLETE", payload: turn.rollKeeps.length > 0 });
   }, [turn.rollCount, turn.roll, turn.rollKeeps]);
 
-  const updateDbTurn = useCallback(async () => {
-    await updateGame({
-      currentTurn: {
-        player: game?.currentTurn.player || "",
-        roll: turn.roll,
-        keeps: turn.roundKeeps,
-        score: turn.score,
-        status: turn.status,
-      },
-    });
-  }, [turn, game, updateGame]);
+  // If currentTurn is busted, wait 5 seconds and then move to next player
+  useEffect(() => {
+    if (!game || !user || game.currentTurn.player !== user.uid) return;
+    if (game.currentTurn.status === "BUSTED") {
+      setTimeout(() => {
+        updateGame({
+          currentTurn: {
+            player: nextPlayer()?.uid || "",
+            roll: [],
+            keeps: [],
+            score: 0,
+            status: "ROLLING",
+          },
+        });
+      }, 5000);
+    }
+  }, [game, nextPlayer, updateGame, user]);
 
-  //sync current turn with db
+  // Sync current turn with db
   useEffect(() => {
     if (!game) return;
     updateDbTurn();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turn]);
 
+  // CONTEXT FUNCTIONS
+  // ==============================
   async function rollDice() {
     if (!game) return;
     const newDiceCount = turn.roll.length > 0 ? turn.roll.length : 6;
@@ -156,6 +196,33 @@ export function GameProvider({ children, id }: GameProviderProps) {
     dispatch({ type: "REMOVE_ROLL_KEEP", payload: { value, rollKeepsIndex } });
   }
 
+  async function stay() {
+    if (!game || !user) return;
+    const newPlayers = game?.players.map((player) => {
+      if (player.uid === user?.uid) {
+        return {
+          ...player,
+          score: player.score + turn.score,
+        };
+      }
+      return player;
+    });
+    await updateGame({
+      players: newPlayers,
+      currentTurn: {
+        player: nextPlayer()?.uid || "",
+        roll: [],
+        keeps: [],
+        status: "",
+        score: 0,
+      },
+    });
+    dispatch({ type: "STAY" });
+  }
+
+  // RENDER
+  // ==============================
+
   if (loading) return <p>Loading ...</p>;
   return (
     <GameContext.Provider
@@ -167,6 +234,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
         rollDice,
         addRollKeep,
         removeRollKeep,
+        stay,
       }}
     >
       {children}

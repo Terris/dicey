@@ -16,7 +16,7 @@ export default function PlayerScores() {
               <FaDice style={{ marginRight: "5px", color: "#d07650" }} />
             )}
             {player.name}
-            {game.owner === player.uid && "*"}
+            {game.owner === player.uid && "*"}-{player.score}
           </p>
         </div>
       ))}

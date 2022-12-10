@@ -13,7 +13,8 @@ type ACTION_TYPE =
   | {
       type: "REMOVE_ROLL_KEEP";
       payload: { value: number; rollKeepsIndex: number };
-    };
+    }
+  | { type: "STAY" };
 
 export interface TurnStateProps {
   rollComplete: boolean;
@@ -125,6 +126,9 @@ export default function reducer(state: TurnStateProps, action: ACTION_TYPE) {
         roll: [...state.roll, action.payload.value],
         score: newScore,
       };
+    }
+    case "STAY": {
+      return { ...initialState };
     }
     default:
       throw new Error();

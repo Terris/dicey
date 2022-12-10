@@ -11,7 +11,7 @@ export type Player = {
 export type Game = {
   id: string;
   owner: string;
-  status: string;
+  status: string; // "LOBBY" | "IN_PROGRESS" | "COMPLETE"
   slug: string;
   players: Player[];
   currentTurn: CurrentTurn;
@@ -20,7 +20,7 @@ export type Game = {
 export type CurrentTurn = {
   player: string;
   roll: number[];
-  keeps: number[][];
+  keeps: number[];
   score: number;
   status: string;
 };
