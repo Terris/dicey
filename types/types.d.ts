@@ -19,8 +19,16 @@ export type Game = {
 
 export type CurrentTurn = {
   player: string;
-  roll: number[];
-  keeps: number[];
   score: number;
-  status: string;
+  status: string; // "IN_PROGRESS" | "BUSTED"
+  rollComplete: boolean;
+  rollCount: number;
+  roll: number[];
+  rollKeeps: number[];
+  rollKeepsScore: number;
+  roundCount: number;
+  roundKeeps: number[][];
+  roundKeepsScore: number;
+  turnKeeps: number[][];
+  turnKeepsScore: number;
 };

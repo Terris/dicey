@@ -3,6 +3,7 @@ import { ref, push, set } from "firebase/database";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../lib/firebase";
 import { uniqueId } from "../utils";
+import { initialTurnState } from "../context/GameContext";
 
 interface UseCreateGameProps {
   onSuccess: (newGameId: string) => void;
@@ -25,6 +26,7 @@ export default function useCreateGame({ onSuccess }: UseCreateGameProps) {
         owner: user.uid,
         slug: uniqueId(6),
         status: "LOBBY",
+        currentTurn: initialTurnState,
         players: [
           {
             uid: user.uid,

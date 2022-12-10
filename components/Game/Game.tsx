@@ -17,7 +17,7 @@ export default function Game() {
   const { error, game } = useGame();
 
   const userPlayer = useMemo(() => {
-    return game?.players.find((player: Player) => player.uid === user?.uid);
+    return game?.players?.find((player: Player) => player.uid === user?.uid);
   }, [game, user?.uid]);
 
   const showNewPlayerScreen = useMemo(() => {
