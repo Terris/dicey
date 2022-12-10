@@ -4,9 +4,10 @@ import styles from "./Die.module.scss";
 interface DieProps {
   value: number;
   onClick?: (value: number) => void;
+  disabled?: boolean;
 }
 
-export default function Die({ value, onClick }: DieProps) {
+export default function Die({ value, onClick, disabled }: DieProps) {
   const randomPlusOrMinus = getRandomInt(0, 1) ? "" : "-";
 
   return (
@@ -14,8 +15,9 @@ export default function Die({ value, onClick }: DieProps) {
       className={styles.die}
       style={{
         transform: `rotate(${randomPlusOrMinus}0.0${getRandomInt(0, 3)}turn)`,
+        cursor: disabled ? "not-allowed" : "pointer",
       }}
-      onClick={() => (onClick ? onClick(value) : null)}
+      onClick={() => (!disabled && onClick ? onClick(value) : null)}
     >
       {value}
     </div>
