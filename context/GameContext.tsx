@@ -16,6 +16,7 @@ import {
   scoreForKeeps,
   scoreForTurn,
   rollHasPoints,
+  pluralizeName,
 } from "../utils";
 
 export interface GameContextProps {
@@ -89,11 +90,14 @@ export function GameProvider({ children, id }: GameProviderProps) {
   const [error, setError] = useState<string | null>(null);
   const [game, setGame] = useState<Game | null>(null);
   const currentTurn = game?.currentTurn || initialTurnState;
+  const currentPlayerName = game?.players.find(
+    (player) => player.uid === currentTurn.player
+  )?.name;
 
   // PRIVATE FUNCTIONS
   // ==============================
 
-  const nextPlayer = useCallback(() => {
+  const getNextPlayer = useCallback(() => {
     if (!game || !user) return null;
     const currentPlayerIndex = game.players.findIndex(
       (player) => player.uid === user.uid
@@ -153,8 +157,14 @@ export function GameProvider({ children, id }: GameProviderProps) {
     }
 
     // Handle BUSTED
+    const newLogs = [
+      ...game.logs,
+      { message: `${currentPlayerName}  busted :(` },
+    ];
     if (!rollHasPoints(newRoll)) {
+      const nextPlayer = getNextPlayer();
       updateGame({
+        logs: newLogs,
         currentTurn: {
           ...currentTurn,
           status: "BUSTED",
@@ -162,9 +172,13 @@ export function GameProvider({ children, id }: GameProviderProps) {
       });
       setTimeout(() => {
         updateGame({
+          logs: [
+            ...newLogs,
+            { message: `${pluralizeName(nextPlayer?.name || "")} turn.` },
+          ],
           currentTurn: {
             ...initialTurnState,
-            player: nextPlayer()?.uid || "",
+            player: nextPlayer?.uid || "",
           },
         });
       }, 5000);
@@ -189,9 +203,8 @@ export function GameProvider({ children, id }: GameProviderProps) {
 
     const newTurnKeepsScore = scoreForTurn(newTurnKeeps);
 
-    await updateGame({
-      currentTurn: {
-        ...currentTurn,
+    await updateGame(
+      {
         rollCount: currentTurn.rollCount + 1,
         rollComplete: false,
         rollKeeps: [],
@@ -204,7 +217,8 @@ export function GameProvider({ children, id }: GameProviderProps) {
         roll: newRoll,
         score: newTurnKeepsScore,
       },
-    });
+      "currentTurn"
+    );
   }
 
   async function addRollKeep({
@@ -222,16 +236,16 @@ export function GameProvider({ children, id }: GameProviderProps) {
     const newRollKeeps = [...currentTurn.rollKeeps, value];
     const newScore = currentTurn.turnKeepsScore + scoreForKeeps(newRollKeeps);
     const rollComplete = newRollKeeps.length > 0;
-    await updateGame({
-      currentTurn: {
-        ...currentTurn,
+    await updateGame(
+      {
         roll: newRoll,
         rollKeeps: newRollKeeps,
         rollKeepsScore: scoreForKeeps(newRollKeeps),
         score: newScore,
         rollComplete,
       },
-    });
+      "currentTurn"
+    );
   }
 
   function removeRollKeep({
@@ -248,16 +262,16 @@ export function GameProvider({ children, id }: GameProviderProps) {
     });
     const newScore = currentTurn.turnKeepsScore + scoreForKeeps(newRollKeeps);
     const rollComplete = newRollKeeps.length > 0;
-    updateGame({
-      currentTurn: {
-        ...currentTurn,
+    updateGame(
+      {
         rollKeeps: newRollKeeps,
         rollKeepsScore: scoreForKeeps(newRollKeeps),
         roll: [...currentTurn.roll, value],
         score: newScore,
         rollComplete,
       },
-    });
+      "currentTurn"
+    );
   }
 
   async function stay() {
@@ -271,11 +285,19 @@ export function GameProvider({ children, id }: GameProviderProps) {
       }
       return player;
     });
+    const nextPlayer = getNextPlayer();
     await updateGame({
       players: newPlayers,
+      logs: [
+        ...game.logs,
+        {
+          message: `${currentPlayerName} stayed with ${currentTurn.score} points.`,
+        },
+        { message: `${pluralizeName(nextPlayer?.name || "")} turn.` },
+      ],
       currentTurn: {
         ...initialTurnState,
-        player: nextPlayer()?.uid || "",
+        player: nextPlayer?.uid || "",
       },
     });
   }

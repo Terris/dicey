@@ -26,14 +26,15 @@ export default function Board() {
     (player) => player.uid === player.uid
   );
   const playerCanStay =
-    (currentPlayer?.score || 0) >= (game?.onBoardThreshold || 1000) &&
-    game?.currentTurn.rollKeeps &&
-    game?.currentTurn?.rollKeeps?.length > 0;
+    (game?.currentTurn.score || 0) >= 1000 ||
+    ((currentPlayer?.score || 0) >= 1000 &&
+      game?.currentTurn.rollKeeps &&
+      game?.currentTurn?.rollKeeps?.length > 0);
 
   if (!game || !user) return null;
   return (
-    <>
-      <div className={styles.board}>
+    <div className={styles.board}>
+      <div className={styles["roll-area"]}>
         {game.currentTurn.roll?.map((value, rollIndex) => (
           <Die
             key={`roll-die-${rollIndex}-${value}`}
@@ -51,23 +52,23 @@ export default function Board() {
           />
         ))}
       </div>
-      <div>
-        Roll keeps:
-        {game.currentTurn.rollKeeps.map((value, rollKeepsIndex) => (
-          <Die
-            key={`keep-die-${rollKeepsIndex}-${value}`}
-            value={value}
-            onClick={() => removeRollKeep({ value, rollKeepsIndex })}
-          />
-        ))}
-      </div>
-      <div>
-        Round Keeps:
-        {game.currentTurn.roundKeeps?.map((keepGroup) =>
-          keepGroup.map((val, idx) => (
-            <Die key={`keep-die-${idx}-${val}`} value={val} />
-          ))
-        )}
+      <div className={styles["keep-area"]}>
+        <div className={styles["keep-area-rollkeeps"]}>
+          {game.currentTurn.rollKeeps.map((value, rollKeepsIndex) => (
+            <Die
+              key={`keep-die-${rollKeepsIndex}-${value}`}
+              value={value}
+              onClick={() => removeRollKeep({ value, rollKeepsIndex })}
+            />
+          ))}
+        </div>
+        <div className={styles["keep-area-turnkeeps"]}>
+          {game.currentTurn.roundKeeps?.map((keepGroup) =>
+            keepGroup.map((val, idx) => (
+              <Die key={`keep-die-${idx}-${val}`} value={val} />
+            ))
+          )}
+        </div>
       </div>
       <p>Score: {game.currentTurn.score}</p>
       {game.currentTurn.status === "BUSTED" ? (
@@ -80,10 +81,17 @@ export default function Board() {
             title="Roll"
             onClick={() => rollDice()}
             disabled={!game.currentTurn.rollComplete}
+            style={{ marginRight: "2rem" }}
           />
-          {playerCanStay && <Button title="Stay" onClick={() => stay()} />}
+
+          <Button
+            title="Stay"
+            onClick={() => stay()}
+            style={{ marginLeft: "2rem" }}
+            disabled={!playerCanStay}
+          />
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -16,6 +16,7 @@ export type Game = {
   players: Player[];
   currentTurn: CurrentTurn;
   onBoardThreshold: number;
+  logs: LogMessage[];
 };
 
 export type CurrentTurn = {
@@ -32,4 +33,8 @@ export type CurrentTurn = {
   roundKeepsScore: number;
   turnKeeps: number[][];
   turnKeepsScore: number;
+};
+
+export type LogMessage = {
+  message: string;
 };

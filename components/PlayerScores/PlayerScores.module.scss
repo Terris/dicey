@@ -1,0 +1,12 @@
+.player-scores {
+  display: flex;
+  flex-direction: column;
+  height: 50%;
+  .player-score {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 14px;
+  }
+}

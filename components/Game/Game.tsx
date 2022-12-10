@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useGame } from "../../context/GameContext";
 import NewPlayerScreen from "../../components/NewPlayerScreen/NewPlayerScreen";
 import PlayerScores from "../../components/PlayerScores/PlayerScores";
+import GameLogs from "../../components/GameLogs/GameLogs";
 import Lobby from "../../components/Lobby/Lobby";
 import { Player } from "../../types/types";
 import styles from "./Game.module.scss";
@@ -33,6 +34,7 @@ export default function Game() {
         <div className={styles.game}>
           <div className={styles["sidebar-left"]}>
             <PlayerScores />
+            <GameLogs />
           </div>
           <div className={styles.board}>
             <p style={{ textAlign: "center" }}>Game #{id}</p>
@@ -45,7 +47,7 @@ export default function Game() {
             )}
           </div>
           <div className={styles["sidebar-right"]}>
-            <p>Chat</p>
+            <p style={{ fontWeight: 700, paddingBottom: "6px" }}>Chat</p>
           </div>
         </div>
       ) : null}

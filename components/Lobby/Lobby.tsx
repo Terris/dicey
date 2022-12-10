@@ -7,7 +7,7 @@ import { initialTurnState, useGame } from "../../context/GameContext";
 import useUpdateGame from "../../hooks/useUpdateGame";
 import Button from "../Button/Button";
 import TextButton from "../TextButton/TextButton";
-import { getRandomInt } from "../../utils";
+import { getRandomInt, pluralizeName } from "../../utils";
 import { Player } from "../../types/types";
 import styles from "./Lobby.module.scss";
 
@@ -29,7 +29,14 @@ export default function Lobby() {
       status: "IN_PROGRESS",
     };
     // update the game
-    updateGame({ currentTurn, status: "IN_PROGRESS" });
+    updateGame({
+      currentTurn,
+      status: "IN_PROGRESS",
+      logs: [
+        { message: "Let's Play!" },
+        { message: `${pluralizeName(randomPlayer.name)} turn.` },
+      ],
+    });
   }
 
   return (

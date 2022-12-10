@@ -16,13 +16,13 @@ export default function useUpdateGame({ id, onSuccess }: UseUpdateGameProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function updateGame(options: UpdatableGame) {
+  async function updateGame(options: any, path?: string) {
     if (!id) return;
     setError(null);
     setLoading(true);
 
     try {
-      await update(ref(db, `games/${id}`), {
+      await update(ref(db, `games/${id}${path ? "/" + path : ""}`), {
         ...options,
       });
       if (onSuccess) onSuccess();

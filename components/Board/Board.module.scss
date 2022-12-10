@@ -1,5 +1,54 @@
 .board {
   padding: 2rem;
-  display: flex;
-  align-items: center;
+  height: 100%;
+  .roll-area {
+    position: relative;
+    height: 250px;
+    width: 300px;
+    margin: 0 auto;
+    div {
+      position: absolute;
+    }
+    div:nth-child(1) {
+      top: 10%;
+      left: 0;
+    }
+    div:nth-child(2) {
+      top: 10%;
+      left: 50%;
+      margin-left: -30px;
+    }
+    div:nth-child(3) {
+      top: 10%;
+      left: 100%;
+      margin-left: -60px;
+    }
+    div:nth-child(4) {
+      top: 50%;
+      left: 0%;
+    }
+    div:nth-child(5) {
+      top: 50%;
+      left: 50%;
+      margin-left: -30px;
+    }
+    div:nth-child(6) {
+      top: 50%;
+      left: 100%;
+      margin-left: -60px;
+    }
+  }
+  .keep-area {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    height: 100px;
+    .keep-area-rollkeeps,
+    .keep-area-turnkeeps {
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
 }

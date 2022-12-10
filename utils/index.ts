@@ -19,6 +19,15 @@ export function getRandomDieValue() {
   return getRandomInt(1, 7);
 }
 
+// LANGUAGE
+// ==================================================
+
+export function pluralizeName(name: string) {
+  const lastLetter = name.slice(-1);
+  if (lastLetter === "s" || lastLetter === "S") return name + "'";
+  return name + "'s";
+}
+
 // SCORING
 // ==================================================
 const SCORE_MAP = {
