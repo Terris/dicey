@@ -37,7 +37,6 @@ export default function Game() {
             <GameLogs />
           </div>
           <div className={styles.board}>
-            <p style={{ textAlign: "center" }}>Game #{id}</p>
             {game.status === "LOBBY" ? (
               <Lobby />
             ) : game.currentTurn.player === user.uid ? (

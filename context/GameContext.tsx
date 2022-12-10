@@ -159,7 +159,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
     // Handle BUSTED
     const newLogs = [
       ...game.logs,
-      { message: `${currentPlayerName}  busted :(` },
+      { message: `${currentPlayerName}  busted ☹️` },
     ];
     if (!rollHasPoints(newRoll)) {
       const nextPlayer = getNextPlayer();
@@ -291,7 +291,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
       logs: [
         ...game.logs,
         {
-          message: `${currentPlayerName} stayed with ${currentTurn.score} points.`,
+          message: `${currentPlayerName} stayed with ${currentTurn.score} points 💰`,
         },
         { message: `${pluralizeName(nextPlayer?.name || "")} turn.` },
       ],

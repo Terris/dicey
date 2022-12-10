@@ -34,6 +34,7 @@ export default function Board() {
   if (!game || !user) return null;
   return (
     <div className={styles.board}>
+      <p style={{ textAlign: "center" }}>Score: {game.currentTurn.score}</p>
       <div className={styles["roll-area"]}>
         {game.currentTurn.roll?.map((value, rollIndex) => (
           <Die
@@ -70,26 +71,24 @@ export default function Board() {
           )}
         </div>
       </div>
-      <p>Score: {game.currentTurn.score}</p>
-      {game.currentTurn.status === "BUSTED" ? (
-        <div>
-          <h1>You Busted!</h1>
-        </div>
-      ) : (
-        <div style={{ textAlign: "center" }}>
-          <Button
-            title="Roll"
-            onClick={() => rollDice()}
-            disabled={!game.currentTurn.rollComplete}
-            style={{ marginRight: "2rem" }}
-          />
+      <div style={{ textAlign: "center" }}>
+        <Button
+          title="Roll"
+          onClick={() => rollDice()}
+          disabled={!game.currentTurn.rollComplete}
+          style={{ marginRight: "2rem" }}
+        />
 
-          <Button
-            title="Stay"
-            onClick={() => stay()}
-            style={{ marginLeft: "2rem" }}
-            disabled={!playerCanStay}
-          />
+        <Button
+          title="Stay"
+          onClick={() => stay()}
+          style={{ marginLeft: "2rem" }}
+          disabled={!playerCanStay}
+        />
+      </div>
+      {game.currentTurn.status === "BUSTED" && (
+        <div className={styles.busted}>
+          <h1>You Busted!</h1>
         </div>
       )}
     </div>

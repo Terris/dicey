@@ -13,6 +13,7 @@ export default function WatchBoard() {
   if (!game) return null;
   return (
     <div className={styles.board}>
+      <p style={{ textAlign: "center" }}>Score: {game?.currentTurn.score}</p>
       <div className={styles["roll-area"]}>
         {roll?.map((value, rollIndex) => (
           <Die
@@ -40,9 +41,8 @@ export default function WatchBoard() {
           )}
         </div>
       </div>
-      <p>Score: {game?.currentTurn.score}</p>
       {game?.currentTurn.status === "BUSTED" && (
-        <div>
+        <div className={styles.busted}>
           <h1>{currentPlayerName} Busted!</h1>
         </div>
       )}
