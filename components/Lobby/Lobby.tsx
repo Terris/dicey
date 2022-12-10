@@ -3,7 +3,7 @@ import {
   RiCheckboxCircleFill,
 } from "react-icons/ri";
 import { useAuth } from "../../context/AuthContext";
-import { useGame } from "../../context/GameContext";
+import { initialTurnState, useGame } from "../../context/GameContext";
 import useUpdateGame from "../../hooks/useUpdateGame";
 import Button from "../Button/Button";
 import TextButton from "../TextButton/TextButton";
@@ -24,10 +24,8 @@ export default function Lobby() {
     if (!game) return;
     const randomPlayer = game.players[getRandomInt(0, game.players.length - 1)];
     const currentTurn = {
+      ...game.currentTurn,
       player: randomPlayer.uid,
-      roll: [],
-      keeps: [],
-      score: 0,
       status: "IN_PROGRESS",
     };
     // update the game

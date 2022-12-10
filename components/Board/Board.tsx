@@ -9,29 +9,42 @@ import styles from "./Board.module.scss";
 
 export default function Board() {
   const { user } = useAuth();
-  const { game, turn, rollDice, addRollKeep, removeRollKeep, stay } = useGame();
+  const { game, rollDice, addRollKeep, removeRollKeep, stay } = useGame();
 
   // Show toast on current users turn
   useEffect(() => {
     if (!game) return;
-    if (game.currentTurn.player === user?.uid && !turn.roll.length) {
+    if (
+      game.currentTurn.player === user?.uid &&
+      !game.currentTurn.roll?.length
+    ) {
       toast.success("Your turn!", { duration: 4000 });
     }
-  }, [game, user?.uid, turn.roll.length]);
+  }, [game, user?.uid, game?.currentTurn?.roll?.length]);
 
-  const playerCanStay = turn.rollKeeps.length > 0;
+  const currentPlayer = game?.players.find(
+    (player) => player.uid === player.uid
+  );
+  const playerCanStay =
+    (currentPlayer?.score || 0) >= (game?.onBoardThreshold || 1000) &&
+    game?.currentTurn.rollKeeps &&
+    game?.currentTurn?.rollKeeps?.length > 0;
 
+  if (!game || !user) return null;
   return (
     <>
       <div className={styles.board}>
-        {turn.roll.map((value, rollIndex) => (
+        {game.currentTurn.roll?.map((value, rollIndex) => (
           <Die
             key={`roll-die-${rollIndex}-${value}`}
             value={value}
             onClick={() => addRollKeep({ value, rollIndex })}
             disabled={
               !canKeepDie({
-                roll: mergeRollAndKeeps(turn.roll, turn.rollKeeps),
+                roll: mergeRollAndKeeps(
+                  game.currentTurn.roll,
+                  game.currentTurn.rollKeeps
+                ),
                 die: value,
               })
             }
@@ -40,28 +53,24 @@ export default function Board() {
       </div>
       <div>
         Roll keeps:
-        {turn.rollKeeps.map((value, rollKeepsIndex) => (
+        {game.currentTurn.rollKeeps.map((value, rollKeepsIndex) => (
           <Die
             key={`keep-die-${rollKeepsIndex}-${value}`}
             value={value}
             onClick={() => removeRollKeep({ value, rollKeepsIndex })}
           />
         ))}
-        <p>Roll Keeps Score: {turn.rollKeepsScore}</p>
       </div>
       <div>
         Round Keeps:
-        {turn.roundKeeps.map((keepGroup) =>
+        {game.currentTurn.roundKeeps?.map((keepGroup) =>
           keepGroup.map((val, idx) => (
             <Die key={`keep-die-${idx}-${val}`} value={val} />
           ))
         )}
-        <p>Round Keeps Score: {turn.roundKeepsScore}</p>
       </div>
-      <p>Turn Keeps: {turn.turnKeeps}</p>
-      <p>Turn Score: {turn.turnKeepsScore}</p>
-      <p>Score: {turn.score}</p>
-      {game?.currentTurn.status === "BUSTED" ? (
+      <p>Score: {game.currentTurn.score}</p>
+      {game.currentTurn.status === "BUSTED" ? (
         <div>
           <h1>You Busted!</h1>
         </div>
@@ -70,7 +79,7 @@ export default function Board() {
           <Button
             title="Roll"
             onClick={() => rollDice()}
-            disabled={!turn.rollComplete}
+            disabled={!game.currentTurn.rollComplete}
           />
           {playerCanStay && <Button title="Stay" onClick={() => stay()} />}
         </div>

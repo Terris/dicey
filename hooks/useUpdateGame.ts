@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { ref, update, DatabaseReference } from "firebase/database";
 import { db } from "../lib/firebase";
-import { Game, Player } from "../types/types";
+import { CurrentTurn, Game } from "../types/types";
 
 interface UseUpdateGameProps {
   id?: string;
   onSuccess?: () => void;
 }
 
+interface UpdatableGame extends Partial<Omit<Game, "currentTurn">> {
+  currentTurn?: Partial<CurrentTurn>;
+}
+
 export default function useUpdateGame({ id, onSuccess }: UseUpdateGameProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function updateGame(options: Partial<Game>) {
+  async function updateGame(options: UpdatableGame) {
     if (!id) return;
     setError(null);
     setLoading(true);

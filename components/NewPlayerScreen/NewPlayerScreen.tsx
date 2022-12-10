@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/router";
 import { DocumentData } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
@@ -20,7 +20,8 @@ export default function NewPlayerScreen({ game }: NewPlayerScreenProps) {
   const { loading, error, updateGame } = useUpdateGame({ id: id as string });
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  async function handleAddNickname() {
+  async function handleAddNickname(e: FormEvent<HTMLFormElement>) {
+    e?.preventDefault();
     setValidationError(null);
     if (nickname === "") {
       setValidationError("Nickname is required.");
@@ -31,6 +32,7 @@ export default function NewPlayerScreen({ game }: NewPlayerScreenProps) {
     const isCurrentPlayer = game?.players.find(
       (player: Player) => player.uid === user?.uid
     );
+
     const newPlayers = isCurrentPlayer
       ? game?.players.map((player: Player) => {
           if (player.uid === user?.uid) {
@@ -61,19 +63,20 @@ export default function NewPlayerScreen({ game }: NewPlayerScreenProps) {
         <h2 className={styles.title}>Welcome, new player!</h2>
         {error && <p style={{ color: "red", paddingTop: "1rem" }}>{error}</p>}
         <p>What shall we call you?</p>
-        <TextInput
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-          disabled={loading}
-        />
-        {validationError && (
-          <p style={{ color: "red", paddingTop: "1rem" }}>{validationError}</p>
-        )}
-        <Button
-          title="Let's Roll!"
-          onClick={() => handleAddNickname()}
-          disabled={loading}
-        />
+        <form onSubmit={(e) => handleAddNickname(e)}>
+          {validationError && (
+            <p style={{ color: "red", paddingTop: "1rem" }}>
+              {validationError}
+            </p>
+          )}
+          <TextInput
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            disabled={loading}
+          />
+
+          <Button title="Let's Roll!" disabled={loading} />
+        </form>
       </div>
     </div>
   );

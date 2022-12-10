@@ -2,7 +2,6 @@ import {
   useEffect,
   useState,
   useCallback,
-  useReducer,
   createContext,
   useContext,
   ReactNode,
@@ -12,17 +11,17 @@ import { db } from "../lib/firebase";
 import { Game } from "../types/types";
 import { useAuth } from "./AuthContext";
 import useUpdateGame from "../hooks/useUpdateGame";
-import reducer, {
-  initialState as initialTurnState,
-  TurnStateProps,
-} from "./GameReducer";
-import { getRandomDieValue, rollHasPoints } from "../utils";
+import {
+  getRandomDieValue,
+  scoreForKeeps,
+  scoreForTurn,
+  rollHasPoints,
+} from "../utils";
 
 export interface GameContextProps {
   loading: boolean;
   error: string | null;
   game?: Game | null;
-  turn: TurnStateProps;
   rollDice: () => void;
   addRollKeep: ({
     value,
@@ -45,7 +44,6 @@ const initialState = {
   loading: false,
   error: null,
   game: null,
-  turn: initialTurnState,
   rollDice: () => null,
   addRollKeep: () => null,
   removeRollKeep: () => null,
@@ -63,31 +61,37 @@ interface GameProviderProps {
   id: string;
 }
 
+export const initialTurnState = {
+  player: "",
+  rollComplete: true,
+  rollCount: 0,
+  roll: [],
+  rollKeeps: [],
+  rollKeepsScore: 0,
+  roundCount: 0,
+  roundKeeps: [],
+  roundKeepsScore: 0,
+  turnKeeps: [],
+  turnKeepsScore: 0,
+  status: "IN_PROGRESS",
+  score: 0,
+};
+
 export function GameProvider({ children, id }: GameProviderProps) {
   const { user } = useAuth();
   const { updateGame } = useUpdateGame({ id });
 
   // current user's turn state is managed in client
-  const [turn, dispatch] = useReducer(reducer, initialTurnState);
+  // const [turn, dispatch] = useReducer(reducer, initialTurnState);
 
   // io game state is managed in firebase
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [game, setGame] = useState<Game | null>(null);
+  const currentTurn = game?.currentTurn || initialTurnState;
 
   // PRIVATE FUNCTIONS
   // ==============================
-  const updateDbTurn = useCallback(async () => {
-    await updateGame({
-      currentTurn: {
-        player: game?.currentTurn.player || "",
-        roll: turn.roll,
-        keeps: [...turn.rollKeeps, ...turn.roundKeeps.flat()],
-        score: turn.score,
-        status: turn.status,
-      },
-    });
-  }, [turn, game, updateGame]);
 
   const nextPlayer = useCallback(() => {
     if (!game || !user) return null;
@@ -113,7 +117,13 @@ export function GameProvider({ children, id }: GameProviderProps) {
       ref(db, "games/" + id),
       (snapshot: DataSnapshot) => {
         const data = snapshot.val();
-        setGame(data);
+        setGame({
+          ...data,
+          currentTurn: {
+            ...initialTurnState,
+            ...data.currentTurn,
+          },
+        });
         setLoading(false);
       },
       (error) => {
@@ -124,64 +134,102 @@ export function GameProvider({ children, id }: GameProviderProps) {
     return () => unsubscribe();
   }, [id, user]);
 
-  // User can roll if user has rollKeeps
-  useEffect(() => {
-    if (turn.rollCount === 0) return;
-    dispatch({ type: "SET_ROLL_COMPLETE", payload: turn.rollKeeps.length > 0 });
-  }, [turn.rollCount, turn.roll, turn.rollKeeps]);
-
-  // If currentTurn is busted, wait 5 seconds and then move to next player
-  useEffect(() => {
-    if (!game || !user || game.currentTurn.player !== user.uid) return;
-    if (game.currentTurn.status === "BUSTED") {
-      setTimeout(() => {
-        updateGame({
-          currentTurn: {
-            player: nextPlayer()?.uid || "",
-            roll: [],
-            keeps: [],
-            score: 0,
-            status: "ROLLING",
-          },
-        });
-      }, 5000);
-    }
-  }, [game, nextPlayer, updateGame, user]);
-
-  // Sync current turn with db
   useEffect(() => {
     if (!game) return;
-    updateDbTurn();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [turn]);
+    // TODO -if a player score is over limit, everyone gets one more chance
+  }, [game]);
 
   // CONTEXT FUNCTIONS
   // ==============================
   async function rollDice() {
     if (!game) return;
-    const newDiceCount = turn.roll.length > 0 ? turn.roll.length : 6;
+
+    // Create new roll
+    const newDiceCount =
+      currentTurn.roll?.length > 0 ? currentTurn.roll?.length : 6;
     const newRoll = [];
     for (let i = 0; i < newDiceCount; i++) {
       newRoll.push(getRandomDieValue());
     }
-    dispatch({
-      type: "ROLL_DICE",
-      payload: newRoll,
+
+    // Handle BUSTED
+    if (!rollHasPoints(newRoll)) {
+      updateGame({
+        currentTurn: {
+          ...currentTurn,
+          status: "BUSTED",
+        },
+      });
+      setTimeout(() => {
+        updateGame({
+          currentTurn: {
+            ...initialTurnState,
+            player: nextPlayer()?.uid || "",
+          },
+        });
+      }, 5000);
+      return;
+    }
+
+    const newRoundKeeps = [
+      ...currentTurn.roundKeeps,
+      currentTurn.rollKeeps,
+    ].filter((n) => n.length);
+
+    const roundComplete = Boolean(
+      currentTurn.rollCount > 0 && currentTurn.roll.length === 0
+    );
+
+    const newRoundKeepsScore = roundComplete ? 0 : scoreForTurn(newRoundKeeps);
+
+    const newTurnKeeps = [
+      ...currentTurn?.turnKeeps,
+      currentTurn?.rollKeeps,
+    ].filter((n) => n.length);
+
+    const newTurnKeepsScore = scoreForTurn(newTurnKeeps);
+
+    await updateGame({
+      currentTurn: {
+        ...currentTurn,
+        rollCount: currentTurn.rollCount + 1,
+        rollComplete: false,
+        rollKeeps: [],
+        rollKeepsScore: 0,
+        roundCount: currentTurn.roundCount + 1,
+        roundKeeps: roundComplete ? [] : newRoundKeeps,
+        roundKeepsScore: newRoundKeepsScore,
+        turnKeeps: newTurnKeeps,
+        turnKeepsScore: newTurnKeepsScore,
+        roll: newRoll,
+        score: newTurnKeepsScore,
+      },
     });
   }
 
-  function addRollKeep({
+  async function addRollKeep({
     value,
     rollIndex,
   }: {
     value: number;
     rollIndex: number;
   }) {
-    dispatch({
-      type: "ADD_ROLL_KEEP",
-      payload: {
-        value,
-        rollIndex,
+    const newRoll = currentTurn.roll.filter((value, index) => {
+      if (index !== rollIndex) {
+        return value;
+      }
+    });
+    const newRollKeeps = [...currentTurn.rollKeeps, value];
+    const newScore = currentTurn.turnKeepsScore + scoreForKeeps(newRollKeeps);
+    const rollComplete = newRollKeeps.length > 0;
+    await updateGame({
+      currentTurn: {
+        ...currentTurn,
+        roll: newRoll,
+        rollKeeps: newRollKeeps,
+        rollKeepsScore: scoreForKeeps(newRollKeeps),
+        score: newScore,
+        rollComplete,
       },
     });
   }
@@ -193,7 +241,23 @@ export function GameProvider({ children, id }: GameProviderProps) {
     value: number;
     rollKeepsIndex: number;
   }) {
-    dispatch({ type: "REMOVE_ROLL_KEEP", payload: { value, rollKeepsIndex } });
+    const newRollKeeps = currentTurn.rollKeeps.filter((val, index) => {
+      if (index !== rollKeepsIndex) {
+        return val;
+      }
+    });
+    const newScore = currentTurn.turnKeepsScore + scoreForKeeps(newRollKeeps);
+    const rollComplete = newRollKeeps.length > 0;
+    updateGame({
+      currentTurn: {
+        ...currentTurn,
+        rollKeeps: newRollKeeps,
+        rollKeepsScore: scoreForKeeps(newRollKeeps),
+        roll: [...currentTurn.roll, value],
+        score: newScore,
+        rollComplete,
+      },
+    });
   }
 
   async function stay() {
@@ -202,7 +266,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
       if (player.uid === user?.uid) {
         return {
           ...player,
-          score: player.score + turn.score,
+          score: player.score + currentTurn.score,
         };
       }
       return player;
@@ -210,14 +274,10 @@ export function GameProvider({ children, id }: GameProviderProps) {
     await updateGame({
       players: newPlayers,
       currentTurn: {
+        ...initialTurnState,
         player: nextPlayer()?.uid || "",
-        roll: [],
-        keeps: [],
-        status: "",
-        score: 0,
       },
     });
-    dispatch({ type: "STAY" });
   }
 
   // RENDER
@@ -230,7 +290,6 @@ export function GameProvider({ children, id }: GameProviderProps) {
         loading,
         error,
         game,
-        turn,
         rollDice,
         addRollKeep,
         removeRollKeep,
