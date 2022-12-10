@@ -3,7 +3,7 @@ import Game from "../components/Game/Game";
 export type Player = {
   uid: string;
   name: string;
-  score: string;
+  score: number;
   ready: boolean;
   connected: boolean;
 };

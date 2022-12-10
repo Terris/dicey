@@ -64,16 +64,17 @@ export default function NewPlayerScreen({ game }: NewPlayerScreenProps) {
         {error && <p style={{ color: "red", paddingTop: "1rem" }}>{error}</p>}
         <p>What shall we call you?</p>
         <form onSubmit={(e) => handleAddNickname(e)}>
-          <TextInput
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            disabled={loading}
-          />
           {validationError && (
             <p style={{ color: "red", paddingTop: "1rem" }}>
               {validationError}
             </p>
           )}
+          <TextInput
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            disabled={loading}
+          />
+
           <Button title="Let's Roll!" disabled={loading} />
         </form>
       </div>

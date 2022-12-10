@@ -22,8 +22,13 @@ export default function Board() {
     }
   }, [game, user?.uid, game?.currentTurn?.roll?.length]);
 
+  const currentPlayer = game?.players.find(
+    (player) => player.uid === player.uid
+  );
   const playerCanStay =
-    game?.currentTurn.rollKeeps && game?.currentTurn?.rollKeeps?.length > 0;
+    (currentPlayer?.score || 0) >= (game?.onBoardThreshold || 1000) &&
+    game?.currentTurn.rollKeeps &&
+    game?.currentTurn?.rollKeeps?.length > 0;
 
   if (!game || !user) return null;
   return (
