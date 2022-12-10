@@ -27,6 +27,7 @@ export default function useCreateGame({ onSuccess }: UseCreateGameProps) {
         slug: uniqueId(6),
         status: "LOBBY",
         currentTurn: initialTurnState,
+        onBoardThreshold: 1000,
         players: [
           {
             uid: user.uid,

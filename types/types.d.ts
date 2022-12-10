@@ -15,6 +15,7 @@ export type Game = {
   slug: string;
   players: Player[];
   currentTurn: CurrentTurn;
+  onBoardThreshold: number;
 };
 
 export type CurrentTurn = {

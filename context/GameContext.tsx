@@ -134,6 +134,11 @@ export function GameProvider({ children, id }: GameProviderProps) {
     return () => unsubscribe();
   }, [id, user]);
 
+  useEffect(() => {
+    if (!game) return;
+    // TODO -if a player score is over limit, everyone gets one more chance
+  }, [game]);
+
   // CONTEXT FUNCTIONS
   // ==============================
   async function rollDice() {
