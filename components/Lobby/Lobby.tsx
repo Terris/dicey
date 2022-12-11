@@ -22,7 +22,7 @@ export default function Lobby() {
 
   function setUpGame() {
     if (!game) return;
-    const randomPlayer = game.players[getRandomInt(0, game.players.length - 1)];
+    const randomPlayer = game.players[getRandomInt(0, game.players.length)];
     const currentTurn = {
       ...game.currentTurn,
       player: randomPlayer.uid,
