@@ -71,11 +71,15 @@ export default function Board() {
           )}
         </div>
       </div>
+
       <div style={{ textAlign: "center" }}>
         <Button
           title="Roll"
           onClick={() => rollDice()}
-          disabled={!game.currentTurn.rollComplete}
+          disabled={
+            !game.currentTurn.rollComplete &&
+            game.currentTurn.status !== "BUSTED"
+          }
           style={{ marginRight: "2rem" }}
         />
 
@@ -83,7 +87,7 @@ export default function Board() {
           title="Stay"
           onClick={() => stay()}
           style={{ marginLeft: "2rem" }}
-          disabled={!playerCanStay}
+          disabled={!playerCanStay && game.currentTurn.status !== "BUSTED"}
         />
       </div>
       {game.currentTurn.status === "BUSTED" && (

@@ -12,7 +12,7 @@ export default function WatchBoard() {
 
   if (!game) return null;
   return (
-    <div className={styles.board}>
+    <div className={styles.board} style={{ pointerEvents: "none" }}>
       <p style={{ textAlign: "center" }}>Score: {game?.currentTurn.score}</p>
       <div className={styles["roll-area"]}>
         {roll?.map((value, rollIndex) => (

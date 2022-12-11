@@ -167,6 +167,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
         logs: newLogs,
         currentTurn: {
           ...currentTurn,
+          roll: newRoll,
           status: "BUSTED",
         },
       });
