@@ -182,7 +182,7 @@ export function GameProvider({ children, id }: GameProviderProps) {
             player: nextPlayer?.uid || "",
           },
         });
-      }, 5000);
+      }, 4000);
       return;
     }
 

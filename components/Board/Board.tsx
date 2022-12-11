@@ -13,23 +13,30 @@ export default function Board() {
 
   // Show toast on current users turn
   useEffect(() => {
-    if (!game) return;
     if (
-      game.currentTurn.player === user?.uid &&
-      !game.currentTurn.roll?.length
+      !game ||
+      !game.currentTurn.roll?.length ||
+      game.currentTurn?.score >= 0
     ) {
+      return;
+    }
+    if (game.currentTurn.player === user?.uid) {
       toast.success("Your turn!", { duration: 4000 });
     }
   }, [game, user?.uid, game?.currentTurn?.roll?.length]);
 
   const currentPlayer = game?.players.find(
-    (player) => player.uid === player.uid
+    (player) => player.uid === user?.uid
   );
   const playerCanStay =
-    (game?.currentTurn.score || 0) >= 1000 ||
-    ((currentPlayer?.score || 0) >= 1000 &&
+    (game?.currentTurn?.score && game?.currentTurn?.score >= 1000) ||
+    (currentPlayer?.score &&
+      currentPlayer?.score >= 1000 &&
       game?.currentTurn.rollKeeps &&
       game?.currentTurn?.rollKeeps?.length > 0);
+
+  console.log("current player", currentPlayer);
+  console.log(game?.currentTurn);
 
   if (!game || !user) return null;
   return (
@@ -77,8 +84,8 @@ export default function Board() {
           title="Roll"
           onClick={() => rollDice()}
           disabled={
-            !game.currentTurn.rollComplete &&
-            game.currentTurn.status !== "BUSTED"
+            !game.currentTurn.rollComplete ||
+            game.currentTurn.status === "BUSTED"
           }
           style={{ marginRight: "2rem" }}
         />
@@ -87,7 +94,7 @@ export default function Board() {
           title="Stay"
           onClick={() => stay()}
           style={{ marginLeft: "2rem" }}
-          disabled={!playerCanStay && game.currentTurn.status !== "BUSTED"}
+          disabled={!playerCanStay || game.currentTurn.status === "BUSTED"}
         />
       </div>
       {game.currentTurn.status === "BUSTED" && (
