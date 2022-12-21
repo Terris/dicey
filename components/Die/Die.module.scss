@@ -1,14 +1,120 @@
 .die {
-  margin: 1rem;
-  width: 60px;
-  min-width: 60px;
-  height: 60px;
-  border-radius: 6px;
-  display: flex;
-  justify-content: center;
   align-items: center;
   border: var(--border);
-  font-weight: 700;
+  border-radius: 6px;
   cursor: pointer;
   box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  font-weight: 700;
+  height: 60px;
+  justify-content: center;
+  margin: 1rem;
+  min-width: 60px;
+  position: relative;
+  width: 60px;
+  .die-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    margin-top: -5px;
+    margin-left: -5px;
+    border-radius: 50%;
+    background-color: #000;
+  }
+  &.die-1 {
+    .die-dot {
+      position: relative;
+      margin: 0;
+    }
+  }
+  &.die-2 {
+    .die-dot:nth-child(1) {
+      top: 12px;
+      left: 12px;
+    }
+    .die-dot:nth-child(2) {
+      top: 46px;
+      left: 46px;
+    }
+  }
+  &.die-3 {
+    .die-dot:nth-child(1) {
+      top: 12px;
+      left: 12px;
+    }
+    .die-dot:nth-child(2) {
+      position: relative;
+      margin: 0;
+    }
+    .die-dot:nth-child(3) {
+      top: 46px;
+      left: 46px;
+    }
+  }
+  &.die-4 {
+    .die-dot:nth-child(1) {
+      top: 12px;
+      left: 12px;
+    }
+    .die-dot:nth-child(2) {
+      top: 46px;
+      left: 12px;
+    }
+    .die-dot:nth-child(3) {
+      top: 12px;
+      left: 46px;
+    }
+    .die-dot:nth-child(4) {
+      top: 46px;
+      left: 46px;
+    }
+  }
+  &.die-5 {
+    .die-dot:nth-child(1) {
+      top: 12px;
+      left: 12px;
+    }
+    .die-dot:nth-child(2) {
+      top: 46px;
+      left: 12px;
+    }
+    .die-dot:nth-child(3) {
+      top: 12px;
+      left: 46px;
+    }
+    .die-dot:nth-child(4) {
+      top: 46px;
+      left: 46px;
+    }
+    .die-dot:nth-child(5) {
+      position: relative;
+      margin: 0;
+    }
+  }
+  &.die-6 {
+    .die-dot:nth-child(1) {
+      top: 12px;
+      left: 12px;
+    }
+    .die-dot:nth-child(2) {
+      top: 50%;
+      left: 12px;
+    }
+    .die-dot:nth-child(3) {
+      top: 46px;
+      left: 12px;
+    }
+    .die-dot:nth-child(4) {
+      top: 12px;
+      left: 46px;
+    }
+    .die-dot:nth-child(5) {
+      top: 50%;
+      left: 46px;
+    }
+    .die-dot:nth-child(6) {
+      top: 46px;
+      left: 46px;
+    }
+  }
 }
