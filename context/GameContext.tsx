@@ -277,6 +277,19 @@ export function GameProvider({ children, id }: GameProviderProps) {
 
   async function stay() {
     if (!game || !user) return;
+    updateGame({
+      logs: [
+        ...game.logs,
+        {
+          message: `${currentPlayerName} stayed with ${currentTurn.score} points 💰`,
+        },
+      ],
+      currentTurn: {
+        ...currentTurn,
+        status: "STAYED",
+      },
+    });
+
     const newPlayers = game?.players.map((player) => {
       if (player.uid === user?.uid) {
         return {
@@ -287,20 +300,23 @@ export function GameProvider({ children, id }: GameProviderProps) {
       return player;
     });
     const nextPlayer = getNextPlayer();
-    await updateGame({
-      players: newPlayers,
-      logs: [
-        ...game.logs,
-        {
-          message: `${currentPlayerName} stayed with ${currentTurn.score} points 💰`,
+
+    setTimeout(async () => {
+      await updateGame({
+        players: newPlayers,
+        logs: [
+          ...game.logs,
+          {
+            message: `${currentPlayerName} stayed with ${currentTurn.score} points 💰`,
+          },
+          { message: `${pluralizeName(nextPlayer?.name || "")} turn.` },
+        ],
+        currentTurn: {
+          ...initialTurnState,
+          player: nextPlayer?.uid || "",
         },
-        { message: `${pluralizeName(nextPlayer?.name || "")} turn.` },
-      ],
-      currentTurn: {
-        ...initialTurnState,
-        player: nextPlayer?.uid || "",
-      },
-    });
+      });
+    }, 4000);
   }
 
   // RENDER

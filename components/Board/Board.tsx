@@ -106,6 +106,14 @@ export default function Board() {
             <h1>You Busted!</h1>
           </div>
         )}
+        {game.currentTurn.status === "STAYED" && (
+          <div className={styles.stayed}>
+            <h1>
+              You Stayed <br />
+              with {game.currentTurn.score}!
+            </h1>
+          </div>
+        )}
       </div>
     </>
   );

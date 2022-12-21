@@ -63,5 +63,19 @@
     font-family: var(--heading-font);
     font-weight: 400;
     text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+    line-height: 1.25;
+  }
+  .stayed {
+    position: absolute;
+    top: 25%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 3rem;
+    color: var(--primary-color);
+    font-family: var(--heading-font);
+    font-weight: 400;
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+    line-height: 1.25;
   }
 }

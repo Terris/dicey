@@ -46,6 +46,14 @@ export default function WatchBoard() {
           <h1>{currentPlayerName} Busted!</h1>
         </div>
       )}
+      {game?.currentTurn.status === "STAYED" && (
+        <div className={styles.stayed}>
+          <h1>
+            {currentPlayerName} Stayed <br />
+            with {game.currentTurn.score}!
+          </h1>
+        </div>
+      )}
     </div>
   );
 }
